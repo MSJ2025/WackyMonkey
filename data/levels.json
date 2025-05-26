@@ -1,0 +1,85 @@
+{  
+"1": {
+    "player": {
+      "jump_delta":    0,
+      "gravity_delta": 0
+    },
+    "platform.tscn": {
+      "chance":      1.0,   
+      "static":      1.0,
+      "horizontal":  0.0,
+      "vertical":    0.0,
+      "breakable":   0.0,
+      "persistent":  1.0,
+      "bounce_mult": 1.0    
+    },
+    "platform2.tscn": {
+      "chance":      0.0,   
+      "static":      0.0,
+      "horizontal":  0.0,
+      "vertical":    0.0,
+      "breakable":   0.0,
+      "persistent":  0.0,
+      "bounce_mult": 0.0    
+    },
+    "banana.tscn": {
+      "spawn_interval":     0.5,   
+      "max_simultaneous":   4      
+    },
+    "peanut.tscn": {
+      "spawn_interval":   30.0,  
+      "max_simultaneous": 1,     
+      "buff_multiplier":  3.0,   
+      "buff_duration":    4.0    
+    },
+    "magnet.tscn": {
+  "chance":           1.0,
+  "spawn_interval":  20.0,
+  "duration":        10.0,
+  "radius":         300.0,
+  "strength":       400.0,
+  "max_simultaneous": 3}
+ },
+
+"2": {
+    "player": {
+      "jump_delta":    0,
+      "gravity_delta": 0
+    },
+    "platform.tscn": {
+      "chance":      1.0,   
+      "static":      1.0,
+      "horizontal":  0.0,
+      "vertical":    0.0,
+      "breakable":   0.0,
+      "persistent":  1.0,
+      "bounce_mult": 1.5    
+    },
+    "platform2.tscn": {
+      "chance":      0.0,   
+      "static":      0.0,
+      "horizontal":  0.0,
+      "vertical":    0.0,
+      "breakable":   0.0,
+      "persistent":  0.0,
+      "bounce_mult": 0.0    
+    },
+    "banana.tscn": {
+      "spawn_interval":     0.5,   
+      "max_simultaneous":   4      
+    },
+    "peanut.tscn": {
+      "spawn_interval":   30.0,  
+      "max_simultaneous": 1,     
+      "buff_multiplier":  3.0,   
+      "buff_duration":    4.0    
+    },
+    "magnet.tscn": {
+  "chance":           1.0,
+  "spawn_interval":  20.0,
+  "duration":        10.0,
+  "radius":         300.0,
+  "strength":       400.0,
+  "max_simultaneous": 3}
+ },
+}

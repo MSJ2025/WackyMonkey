@@ -1,0 +1,245 @@
+[gd_scene load_steps=20 format=3 uid="uid://cktmgt1i5lvoa"]
+
+[ext_resource type="Script" path="res://scripts/ScriptGame.gd" id="1_ywbhx"]
+[ext_resource type="PackedScene" uid="uid://bq0m6dlp0wgvn" path="res://scenes/ground.tscn" id="2_giilh"]
+[ext_resource type="PackedScene" uid="uid://bjh64iu76wlub" path="res://scenes/platform.tscn" id="3_35ofn"]
+[ext_resource type="PackedScene" uid="uid://3ko2si50vxr2" path="res://scenes/platform2.tscn" id="4_7w8n5"]
+[ext_resource type="PackedScene" uid="uid://oq565n8i7mee" path="res://scenes/banana.tscn" id="5_rit4b"]
+[ext_resource type="PackedScene" uid="uid://blie71tmb10yj" path="res://scenes/cacahuette.tscn" id="6_uvepm"]
+[ext_resource type="AudioStream" uid="uid://b1qoydjtqmdi8" path="res://assets/sons/woosh.mp3" id="7_pupda"]
+[ext_resource type="AudioStream" uid="uid://crclskxakrqt0" path="res://assets/sons/Wacky Monkey.mp3" id="8_b26ab"]
+[ext_resource type="AudioStream" uid="uid://cij2ewx5no2eg" path="res://assets/sons/SoundPeanut.mp3" id="9_wrouo"]
+[ext_resource type="AudioStream" uid="uid://d3yama7jsipol" path="res://assets/sons/swradiomixfx-107336.mp3" id="10_uqiji"]
+[ext_resource type="AudioStream" uid="uid://duq24r75ls41u" path="res://assets/sons/levelUp.mp3" id="11_fat3d"]
+[ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="11_pcuf6"]
+[ext_resource type="Texture2D" uid="uid://v0ppkugi2855" path="res://assets/fond2.png" id="12_17q4b"]
+[ext_resource type="PackedScene" uid="uid://coypfcfu53ilu" path="res://scenes/Player.tscn" id="13_ipcg1"]
+[ext_resource type="AudioStream" uid="uid://rf3gdsknj56c" path="res://assets/sons/jump.mp3" id="14_y0he4"]
+[ext_resource type="Script" path="res://scripts/game_over_layer.gd" id="15_i1qyh"]
+
+[sub_resource type="SystemFont" id="SystemFont_jgrib"]
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_edy2h"]
+line_spacing = 12.0
+font = SubResource("SystemFont_jgrib")
+font_size = 30
+outline_size = 2
+outline_color = Color(0.0431373, 0, 0, 1)
+shadow_size = 3
+
+[sub_resource type="LabelSettings" id="LabelSettings_i20c6"]
+font_size = 69
+font_color = Color(1, 0.00999999, 0.00999999, 1)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_ywbhx")
+ground_scene = ExtResource("2_giilh")
+platform_scene = ExtResource("3_35ofn")
+platform2_scene = ExtResource("4_7w8n5")
+banana_scene = ExtResource("5_rit4b")
+peanut_scene = ExtResource("6_uvepm")
+
+[node name="BananaPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_pupda")
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_b26ab")
+volume_db = -11.949
+autoplay = true
+parameters/looping = true
+
+[node name="PeanutPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_wrouo")
+
+[node name="MagnetPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_uqiji")
+
+[node name="LevelUpPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_fat3d")
+
+[node name="Parallax2D" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Parallax2D"]
+texture_filter = 1
+motion_scale = Vector2(0, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D/ParallaxLayer"]
+position = Vector2(487, 1180.75)
+scale = Vector2(4.29619, 1.87793)
+texture = ExtResource("11_pcuf6")
+hframes = 3
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Parallax2D"]
+motion_scale = Vector2(0.2, 0.2)
+motion_mirroring = Vector2(0, 2555)
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D/ParallaxLayer2"]
+texture_repeat = 2
+position = Vector2(479, 1547)
+scale = Vector2(3.19336, 1.67367)
+texture = ExtResource("12_17q4b")
+region_enabled = true
+region_rect = Rect2(10, 0, 512, 3000)
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Parallax2D"]
+motion_scale = Vector2(0.6, 0.6)
+motion_mirroring = Vector2(0, 2555)
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D/ParallaxLayer3"]
+modulate = Color(0.486275, 1, 0.796078, 1)
+texture_repeat = 2
+position = Vector2(471, 898.5)
+scale = Vector2(3.14844, 1.24167)
+texture = ExtResource("12_17q4b")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(10, 0, 512, 3000)
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="Parallax2D"]
+motion_scale = Vector2(0.8, 0.8)
+motion_mirroring = Vector2(0, 2555)
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D/ParallaxLayer4"]
+modulate = Color(0.996078, 0.964706, 0.631373, 0.8)
+self_modulate = Color(0.843137, 1, 1, 0.635294)
+texture_repeat = 2
+position = Vector2(375.5, -125.5)
+scale = Vector2(3.13086, 0.993667)
+texture = ExtResource("12_17q4b")
+region_enabled = true
+region_rect = Rect2(10, 0, 512, 3000)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 0
+scale = Vector2(2, 2)
+transform = Transform2D(2, 0, 0, 2, 0, 0)
+
+[node name="LabelScore" type="Label" parent="CanvasLayer"]
+clip_contents = true
+anchors_preset = -1
+anchor_left = 0.21
+anchor_right = 0.21
+offset_left = -204.5
+offset_top = 51.0
+offset_right = -108.5
+offset_bottom = 93.0
+text = "Score :"
+label_settings = SubResource("LabelSettings_edy2h")
+
+[node name="Level" type="Label" parent="CanvasLayer"]
+clip_contents = true
+anchors_preset = -1
+anchor_left = 0.21
+anchor_right = 0.21
+offset_left = -65.7
+offset_top = 53.0
+offset_right = 52.3
+offset_bottom = 95.0
+text = "Niveau :"
+label_settings = SubResource("LabelSettings_edy2h")
+horizontal_alignment = 2
+
+[node name="BananaScore" type="Label" parent="CanvasLayer"]
+clip_contents = true
+anchors_preset = -1
+anchor_left = 0.21
+anchor_right = 0.21
+offset_left = 111.3
+offset_top = 55.0
+offset_right = 252.3
+offset_bottom = 97.0
+text = "Bananes :"
+label_settings = SubResource("LabelSettings_edy2h")
+horizontal_alignment = 2
+
+[node name="Player" parent="." instance=ExtResource("13_ipcg1")]
+z_index = 1
+position = Vector2(102, -48)
+scale = Vector2(1, 1)
+
+[node name="JumpPlayer" type="AudioStreamPlayer" parent="Player"]
+stream = ExtResource("14_y0he4")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-1.52588e-05, 0)
+offset = Vector2(360, 0)
+limit_top = -9999999
+limit_smoothed = true
+position_smoothing_enabled = true
+
+[node name="BananaSpawner" type="Timer" parent="."]
+wait_time = 4.0
+autostart = true
+
+[node name="PeanutSpawner" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
+
+[node name="MagnetSpawner" type="Timer" parent="."]
+wait_time = 20.0
+autostart = true
+
+[node name="GameOverLayer" type="CanvasLayer" parent="."]
+process_mode = 1
+visible = false
+script = ExtResource("15_i1qyh")
+
+[node name="ColorRect" type="ColorRect" parent="GameOverLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -164.0
+offset_right = 302.0
+offset_bottom = 161.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -494.0
+offset_top = -215.0
+offset_right = -98.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2.5, 2.5)
+
+[node name="Label" type="Label" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+text = "GAME OVER"
+label_settings = SubResource("LabelSettings_i20c6")
+horizontal_alignment = 1
+
+[node name="LabelMeters" type="Label" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+text = "Hauteur :"
+
+[node name="LabelBananas" type="Label" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+text = "Bananes :"
+
+[node name="LabelScore" type="Label" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+text = "Score :"
+
+[node name="LabelBestScore" type="Label" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+text = "Meilleur score :"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ReplayButton" type="Button" parent="GameOverLayer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Rejouer"
+
+[node name="MenuButton" type="Button" parent="GameOverLayer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Menu"

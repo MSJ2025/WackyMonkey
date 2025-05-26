@@ -1,0 +1,103 @@
+[gd_scene load_steps=13 format=3 uid="uid://oq565n8i7mee"]
+
+[ext_resource type="Texture2D" uid="uid://d2ut3lfucbf1v" path="res://assets/sprite.png" id="1_60f6w"]
+
+[sub_resource type="GDScript" id="GDScript_1e6xb"]
+script/source = "# res://scripts/bananascript.gd
+extends Area2D
+
+signal collected
+
+func _ready() -> void:
+    # connect() prend désormais un Callable
+    connect(\"body_entered\", Callable(self, \"_on_body_entered\"))
+
+func _on_body_entered(body: Node) -> void:
+    if body is CharacterBody2D:
+        emit_signal(\"collected\")  # pas d'argument ici
+        queue_free()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1iypl"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(0, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sk4p4"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(160, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g4gb4"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(320, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_04phg"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(480, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w60tn"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(640, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x41h1"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(480, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_irc0c"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(320, 540, 151, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byw0d"]
+atlas = ExtResource("1_60f6w")
+region = Rect2(160, 540, 151, 173)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_161nc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1iypl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sk4p4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g4gb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04phg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w60tn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x41h1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_irc0c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byw0d")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_208mq"]
+size = Vector2(42, 115.5)
+
+[node name="Banana" type="Area2D"]
+script = SubResource("GDScript_1e6xb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 2
+texture_filter = 1
+position = Vector2(0, 1)
+sprite_frames = SubResource("SpriteFrames_161nc")
+autoplay = "default"
+frame = 2
+frame_progress = 0.0815093
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+texture_filter = 1
+position = Vector2(-4, 12.75)
+shape = SubResource("RectangleShape2D_208mq")

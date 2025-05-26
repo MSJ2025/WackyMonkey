@@ -1,0 +1,109 @@
+[gd_scene load_steps=10 format=3 uid="uid://iwe0i4jj5did"]
+
+[ext_resource type="Script" path="res://scripts/Splash.gd" id="1_efd2c"]
+[ext_resource type="Texture2D" uid="uid://d38vmm4ldsfy5" path="res://assets/splash.png" id="2_ptaal"]
+[ext_resource type="Texture2D" uid="uid://d35wg808fftaj" path="res://assets/fond3.png" id="3_ga8t4"]
+[ext_resource type="Texture2D" uid="uid://v0ppkugi2855" path="res://assets/fond2.png" id="4_jvqlo"]
+[ext_resource type="Texture2D" uid="uid://bp4ig2myyr54e" path="res://assets/splashplayer.png" id="5_h61lf"]
+[ext_resource type="Texture2D" uid="uid://lgyqxw6o23ij" path="res://assets/title.png" id="6_rpvp5"]
+
+[sub_resource type="Animation" id="Animation_5k8ma"]
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimationPlayer/TextureRect5:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3, 6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(59, -68), Vector2(54, -28), Vector2(29, 8)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimationPlayer/TextureRect5:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3, 3.03333, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1079, 794), Vector2(1159, 909), Vector2(750, 589), Vector2(1032, 759)]
+}
+
+[sub_resource type="Animation" id="Animation_u6m8y"]
+resource_name = "intro"
+length = 3.0
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xufct"]
+_data = {
+"RESET": SubResource("Animation_5k8ma"),
+"intro": SubResource("Animation_u6m8y")
+}
+
+[node name="Splash" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -170.0
+offset_bottom = -170.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_efd2c")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_xufct")
+}
+autoplay = "RESET"
+
+[node name="TextureRect" type="TextureRect" parent="AnimationPlayer"]
+offset_left = -121.0
+offset_top = -72.0
+offset_right = 1246.0
+offset_bottom = 2617.0
+texture = ExtResource("2_ptaal")
+
+[node name="TextureRect4" type="TextureRect" parent="AnimationPlayer"]
+visible = false
+offset_left = -138.0
+offset_top = 108.0
+offset_right = 2617.0
+offset_bottom = 3881.0
+texture = ExtResource("3_ga8t4")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="AnimationPlayer"]
+visible = false
+offset_left = -739.0
+offset_top = 663.0
+offset_right = 715.0
+offset_bottom = 2670.0
+texture = ExtResource("4_jvqlo")
+expand_mode = 1
+
+[node name="player" type="TextureRect" parent="AnimationPlayer"]
+visible = false
+offset_left = 133.0
+offset_top = 365.0
+offset_right = 908.0
+offset_bottom = 1673.0
+texture = ExtResource("5_h61lf")
+expand_mode = 4
+
+[node name="TextureRect5" type="TextureRect" parent="AnimationPlayer"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = -2548.0
+offset_right = 1061.0
+offset_bottom = -1789.0
+grow_vertical = 0
+texture = ExtResource("6_rpvp5")
+expand_mode = 1

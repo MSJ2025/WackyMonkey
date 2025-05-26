@@ -1,0 +1,220 @@
+[gd_scene load_steps=10 format=3 uid="uid://7m7ltil4umdx"]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_7lnrl"]
+[ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="2_hl68v"]
+[ext_resource type="Texture2D" uid="uid://dyrpheiisfi5s" path="res://assets/base.png" id="3_p4suu"]
+[ext_resource type="Texture2D" uid="uid://bcjnjjejfevy1" path="res://assets/logo.png" id="4_pwct6"]
+[ext_resource type="Texture2D" uid="uid://b4btcldptwdvk" path="res://assets/onkey.png" id="5_plcue"]
+[ext_resource type="Texture2D" uid="uid://et3ecf5kjri" path="res://assets/acky.png" id="6_qt48a"]
+
+[sub_resource type="Animation" id="Animation_ktls6"]
+length = 8.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("logo/logo:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2, 4, 6, 8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 3.14159, 3.14159, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("logo/acky:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2, 3.06667, 7, 8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("logo/onkey:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 3, 4, 5.96667, 7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_pyac8"]
+resource_name = "new_animation"
+length = 12.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("logo/logo:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2, 4.1, 7.96667, 10.1, 12),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 3.14159, 3.14159, 6.28319, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("logo/acky:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2, 3.13333, 9.06667, 10.0667, 12),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("logo/onkey:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2.06667, 4.03333, 7.96667, 9.03333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0hp1h"]
+_data = {
+"RESET": SubResource("Animation_ktls6"),
+"new_animation": SubResource("Animation_pyac8")
+}
+
+[node name="MainMenu" type="CanvasLayer"]
+script = ExtResource("1_7lnrl")
+
+[node name="background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 15.0
+offset_right = 2.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_hl68v")
+
+[node name="background2" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -932.0
+offset_top = 1501.0
+offset_right = -1342.0
+offset_bottom = -234.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+texture = ExtResource("3_p4suu")
+expand_mode = 1
+stretch_mode = 3
+
+[node name="background3" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 513.0
+offset_top = 2351.0
+offset_right = 513.0
+offset_bottom = 2351.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_p4suu")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="background4" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 579.0
+offset_top = 2016.0
+offset_right = -254.0
+offset_bottom = -312.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4, 4)
+texture = ExtResource("3_p4suu")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.5
+offset_top = -168.0
+offset_right = -163.5
+offset_bottom = 115.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "JOUER"
+
+[node name="LeaderboardButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "CLASSEMENT"
+
+[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Paramètres"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "QUITTER"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -687.0
+offset_top = 1575.0
+offset_right = 1892.0
+offset_bottom = 3026.0
+texture = ExtResource("3_p4suu")
+expand_mode = 1
+
+[node name="logo" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_0hp1h")
+}
+autoplay = "RESET"
+
+[node name="logo" type="Sprite2D" parent="logo"]
+position = Vector2(267, 321)
+scale = Vector2(0.366342, 0.341808)
+texture = ExtResource("4_pwct6")
+
+[node name="onkey" type="Sprite2D" parent="logo"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(765, 340)
+scale = Vector2(0.936, 1.008)
+texture = ExtResource("5_plcue")
+
+[node name="acky" type="Sprite2D" parent="logo"]
+texture_filter = 1
+position = Vector2(728, 327)
+scale = Vector2(0.66416, 0.66416)
+texture = ExtResource("6_qt48a")
