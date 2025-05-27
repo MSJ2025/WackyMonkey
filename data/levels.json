@@ -36,8 +36,8 @@
   "chance":           1.0,
   "spawn_interval":  20.0,
   "duration":        10.0,
-  "radius":         300.0,
-  "strength":       400.0,
+  "radius":         900.0,
+  "strength":       2000.0,
   "max_simultaneous": 3}
  },
 

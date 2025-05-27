@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cktmgt1i5lvoa"]
+[gd_scene load_steps=21 format=3 uid="uid://cktmgt1i5lvoa"]
 
 [ext_resource type="Script" path="res://scripts/ScriptGame.gd" id="1_ywbhx"]
 [ext_resource type="PackedScene" uid="uid://bq0m6dlp0wgvn" path="res://scenes/ground.tscn" id="2_giilh"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="11_pcuf6"]
 [ext_resource type="Texture2D" uid="uid://v0ppkugi2855" path="res://assets/fond2.png" id="12_17q4b"]
 [ext_resource type="PackedScene" uid="uid://coypfcfu53ilu" path="res://scenes/Player.tscn" id="13_ipcg1"]
+[ext_resource type="Texture2D" uid="uid://cgsrr1cqtlny" path="res://assets/panneau.png" id="14_e7ov5"]
 [ext_resource type="AudioStream" uid="uid://rf3gdsknj56c" path="res://assets/sons/jump.mp3" id="14_y0he4"]
 [ext_resource type="Script" path="res://scripts/game_over_layer.gd" id="15_i1qyh"]
 
@@ -39,6 +40,8 @@ platform_scene = ExtResource("3_35ofn")
 platform2_scene = ExtResource("4_7w8n5")
 banana_scene = ExtResource("5_rit4b")
 peanut_scene = ExtResource("6_uvepm")
+initial_platforms = 60
+vertical_gap = 100.0
 
 [node name="BananaPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_pupda")
@@ -115,6 +118,11 @@ layer = 0
 scale = Vector2(2, 2)
 transform = Transform2D(2, 0, 0, 2, 0, 0)
 
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer"]
+position = Vector2(303.627, -34.5625)
+scale = Vector2(0.529653, 0.557118)
+texture = ExtResource("14_e7ov5")
+
 [node name="LabelScore" type="Label" parent="CanvasLayer"]
 clip_contents = true
 anchors_preset = -1
@@ -163,7 +171,7 @@ stream = ExtResource("14_y0he4")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-1.52588e-05, 0)
-offset = Vector2(360, 0)
+offset = Vector2(600, 0)
 limit_top = -9999999
 limit_smoothed = true
 position_smoothing_enabled = true
@@ -182,7 +190,6 @@ autostart = true
 
 [node name="GameOverLayer" type="CanvasLayer" parent="."]
 process_mode = 1
-visible = false
 script = ExtResource("15_i1qyh")
 
 [node name="ColorRect" type="ColorRect" parent="GameOverLayer"]
@@ -233,6 +240,10 @@ text = "Score :"
 layout_mode = 2
 text = "Meilleur score :"
 
+[node name="LineEdit_Pseudo" type="LineEdit" parent="GameOverLayer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Inscris ton pseudo"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="GameOverLayer/VBoxContainer"]
 layout_mode = 2
 
@@ -243,3 +254,29 @@ text = "Rejouer"
 [node name="MenuButton" type="Button" parent="GameOverLayer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Menu"
+
+[node name="PseudoPopup" type="Popup" parent="GameOverLayer"]
+initial_position = 1
+size = Vector2i(500, 100)
+
+[node name="PopupLineEdit" type="LineEdit" parent="GameOverLayer/PseudoPopup"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "ajoutes ton pseudo pour continuer "
+alignment = 1
+
+[node name="PopupOkButton" type="Button" parent="GameOverLayer/PseudoPopup"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -15.5
+offset_top = -31.0
+offset_right = 15.5
+grow_horizontal = 2
+grow_vertical = 0
+text = "OK"

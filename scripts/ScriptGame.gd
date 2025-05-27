@@ -30,6 +30,7 @@ var _peanut_active          : bool  = false
 var _player_base_speed      : float = 0.0
 var _player_base_jump_force : float = 0.0
 
+
 # — Nodes —
 @onready var camera2d        : Camera2D          = $Camera2D
 @onready var player          : CharacterBody2D   = $Player
@@ -44,10 +45,16 @@ var _player_base_jump_force : float = 0.0
 @onready var magnet_spawner : Timer = $MagnetSpawner
 @onready var magnet_sfx     : AudioStreamPlayer = $MagnetPlayer
 @onready var level_up_sfx : AudioStreamPlayer = $LevelUpPlayer
+@onready var lineedit_pseudo = $GameOverLayer/VBoxContainer/LineEdit_Pseudo
+@onready var pseudo_popup = $GameOverLayer/PseudoPopup
+@onready var popup_lineedit = pseudo_popup.get_node("PopupLineEdit")
+@onready var popup_ok_button = pseudo_popup.get_node("PopupOkButton")
 
 var _magnet_active : bool = false
 var _magnet_radius : float = 0.0
 var _magnet_strength : float = 0.0
+
+var _pending_action: String = ""
 
 func _ready() -> void:
     # → 1) charge la config JSON pour ce niveau
@@ -100,6 +107,57 @@ func _ready() -> void:
     magnet_spawner.connect("timeout", Callable(self, "_on_MagnetSpawner_timeout"))
     print("▶ MagnetSpawner configuré :", magnet_spawner.wait_time, "s, autostart =", magnet_spawner.autostart)
 
+    var saved_pseudo = load_pseudo()
+    if saved_pseudo != "":
+        lineedit_pseudo.text = saved_pseudo
+        
+    popup_ok_button.connect("pressed", Callable(self, "_on_pseudo_popup_ok_pressed"))
+    pseudo_popup.connect("popup_hide", Callable(self, "_on_pseudo_popup_closed"))
+        
+   
+        
+func _on_pseudo_text_changed(new_text):
+    save_pseudo(new_text)
+    
+func save_pseudo(pseudo: String) -> void:
+    var config = ConfigFile.new()
+    config.set_value("user", "pseudo", pseudo)
+    config.save("user://user_settings.cfg")
+
+func load_pseudo() -> String:
+    var config = ConfigFile.new()
+    var err = config.load("user://user_settings.cfg")
+    if err == OK:
+        return config.get_value("user", "pseudo", "")
+    return ""
+    
+func _on_pseudo_popup_ok_pressed() -> void:
+    var pseudo = popup_lineedit.text.strip_edges()
+    if pseudo == "":
+        show_message("Le pseudo ne peut pas être vide.")
+        return
+    lineedit_pseudo.text = pseudo
+    save_pseudo(pseudo)
+    pseudo_popup.hide()
+    game_over_layer.get_node("ReplayButton").disabled = false
+    game_over_layer.get_node("MenuButton").disabled = false
+    
+    # Lance l'action en attente (replay ou menu)
+    if _pending_action == "replay":
+        _pending_action = ""
+        _save_and_go_to_scene("res://scenes/Game.tscn")
+    elif _pending_action == "menu":
+        _pending_action = ""
+        _save_and_go_to_scene("res://scenes/MainMenu.tscn")
+    
+    
+func save_score_local(score: int) -> void:
+    var config = ConfigFile.new()
+    config.set_value("scores", "best_score", score)
+    var err = config.save("user://scores.cfg")
+    if err != OK:
+        print("Erreur lors de la sauvegarde du score local")
+    
 
 func _process(_delta: float) -> void:
     # 1) mets à jour le sommet atteint
@@ -113,7 +171,7 @@ func _process(_delta: float) -> void:
         return
 
     # 3) spawn infini de plateformes vers le haut
-    if player.global_position.y < highest_y + 400:
+    if player.global_position.y < highest_y + 900:
         spawn_platform(highest_y - vertical_gap)
         highest_y -= vertical_gap
 
@@ -148,7 +206,39 @@ func _process(_delta: float) -> void:
                 b.global_position += dir * _magnet_strength * _delta
         
 
+var local_scores : Array = []
 
+func load_scores_local():
+    var config = ConfigFile.new()
+    var err = config.load("user://leaderboard.cfg")
+    local_scores.clear()
+    if err == OK:
+        for i in range(config.get_section_keys("scores").size() / 2): # deux clés par score (pseudo + valeur)
+            var key = "score_%d" % i
+            var username = config.get_value("scores", key + "_username", "Anonyme")
+            var score = int(config.get_value("scores", key + "_value", 0))
+            local_scores.append({"username": username, "score": score})
+        local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
+    else:
+        print("Pas de fichier de scores local trouvé")
+
+func save_scores_local():
+    var config = ConfigFile.new()
+    config.clear()
+    for i in range(local_scores.size()):
+        var key = "score_%d" % i
+        config.set_value("scores", key + "_username", local_scores[i]["username"])
+        config.set_value("scores", key + "_value", local_scores[i]["score"])
+    var err = config.save("user://leaderboard.cfg")
+    if err != OK:
+        print("Erreur lors de la sauvegarde des scores")
+
+func add_score_local(username: String, score: int) -> void:
+    local_scores.append({"username": username, "score": score})
+    local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
+    if local_scores.size() > 10:
+        local_scores = local_scores.slice(0, 10)
+    save_scores_local()
 
 func _on_game_over() -> void:
     if game_over_layer.visible: return
@@ -158,10 +248,41 @@ func _on_game_over() -> void:
 
     # Appelle l’animation d’affichage du score sur GameOverLayer
     $GameOverLayer.show_results(height_score, banana_score)
+    add_score_local(lineedit_pseudo.text.strip_edges(), height_score)
 
 func _on_replay_pressed() -> void:
-    get_tree().paused = false
-    get_tree().reload_current_scene()
+    if not _check_pseudo():
+        _pending_action = "replay"
+        pseudo_popup.popup_centered()
+        return
+    _save_and_go_to_scene("res://scenes/Game.tscn")  # adapte le chemin
+
+func _on_menu_pressed() -> void:
+    if not _check_pseudo():
+        _pending_action = "menu"
+        pseudo_popup.popup_centered()
+        return
+    _save_and_go_to_scene("res://scenes/MainMenu.tscn")  # adapte le chemin
+    
+    
+    
+func _check_pseudo() -> bool:
+    var pseudo = lineedit_pseudo.text.strip_edges()
+    if pseudo == "":
+        show_message("Veuillez saisir un pseudo avant de continuer.")
+        return false
+    save_pseudo(pseudo)
+    return true
+
+func _save_and_go_to_scene(scene_path: String) -> void:
+    add_score_local(lineedit_pseudo.text.strip_edges(), height_score)
+    save_scores_local()
+    get_tree().change_scene(scene_path)
+    
+    
+func show_message(msg: String) -> void:
+    print(msg)
+    # OU, si tu as un Label prévu pour les messages, mets à jour son texte ici.
 
 func _level_up() -> void:
     level += 1

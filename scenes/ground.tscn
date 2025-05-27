@@ -7,6 +7,7 @@ size = Vector2(911.5, 154)
 
 [node name="Ground" type="StaticBody2D"]
 z_index = -1
+scale = Vector2(1.5, 1.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1

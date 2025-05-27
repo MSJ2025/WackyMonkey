@@ -1,0 +1,5 @@
+res://scenes/MainMenu.tscn
+res://scripts/ScriptGame.gd
+res://scenes/Game.tscn
+res://scripts/game_over_layer.gd
+res://scenes/Leaderboard.tscn

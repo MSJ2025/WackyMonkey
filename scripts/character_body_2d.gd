@@ -2,8 +2,8 @@
 extends CharacterBody2D
 
 @export var speed      : float = 210.0
-@export var jump_force : float = 1100.0
-@export var gravity    : float = 1500.0
+@export var jump_force : float = 1500.0
+@export var gravity    : float = 2500.0
 
 @onready var anim     : AnimatedSprite2D  = $AnimatedSprite2D
 @onready var col_jump : CollisionShape2D  = $Collisionjump

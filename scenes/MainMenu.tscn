@@ -29,7 +29,7 @@ tracks/1/path = NodePath("logo/acky:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 2, 3.06667, 7, 8),
+"times": PackedFloat32Array(0, 2, 2.73333, 7.76667, 8.56667),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
@@ -41,7 +41,7 @@ tracks/2/path = NodePath("logo/onkey:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 3, 4, 5.96667, 7),
+"times": PackedFloat32Array(0, 3.93333, 4.6, 5.96667, 6.73333),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
@@ -209,8 +209,8 @@ texture = ExtResource("4_pwct6")
 
 [node name="onkey" type="Sprite2D" parent="logo"]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(765, 340)
-scale = Vector2(0.936, 1.008)
+position = Vector2(744, 345)
+scale = Vector2(0.6555, 0.705923)
 texture = ExtResource("5_plcue")
 
 [node name="acky" type="Sprite2D" parent="logo"]

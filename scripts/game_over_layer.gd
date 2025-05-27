@@ -7,6 +7,8 @@ extends CanvasLayer
 @onready var replay_button    = $VBoxContainer/HBoxContainer/ReplayButton
 @onready var menu_button      = $VBoxContainer/HBoxContainer/MenuButton
 
+
+
 # Variables d’animation
 var final_meters   : int = 0
 var final_bananas  : int = 0
@@ -16,11 +18,16 @@ var anim_speed     : int = 600   # points par seconde
 
 var best_score     : int = 0
 
+
+
 func _ready():
+    replay_button.disabled = true
+    menu_button.disabled = true
     print("=> GameOverLayer READY sur self:", self)
     visible = false
     replay_button.pressed.connect(_on_replay_pressed)
     menu_button.pressed.connect(_on_menu_pressed)
+    
 
 func show_results(height, bananas):
     print("== NOUVEL APPEL show_results avec :", height, bananas, "sur self:", self)

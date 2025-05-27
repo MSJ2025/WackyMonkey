@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 @export var game_scene_path        : String = "res://scenes/Game.tscn"
-@export var leaderboard_scene     : String = ""  # si plugin GameCenter
+@export var leaderboard_scene     : String = "res://scenes/Leaderboard.tscn"  # si plugin GameCenter
 @export var settings_scene_path   : String = ""  # optionnel
 
 func _ready():
@@ -13,11 +13,8 @@ func _ready():
 func _on_Play_pressed():
     get_tree().change_scene_to_file(game_scene_path)
 
-##func _on_Leaderboard_pressed():
-##    if Engine.has_singleton("GameCenter"):
-##       GameCenter.show_leaderboard()  # selon ton plugin
-##    else:
-##        print("Plugin GameCenter non configuré")
+func _on_Leaderboard_pressed():
+    get_tree().change_scene_to_file(leaderboard_scene)
 
 func _on_Settings_pressed():
     if settings_scene_path != "":
