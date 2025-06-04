@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Éditeur de niveaux – Wacky Monkey</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #caf0f8 0%, #fffde4 90%);
+            margin: 0; padding: 0; min-height: 100vh;
+        }
+        .container {
+            max-width: 940px;
+            margin: 32px auto 20px;
+            background: rgba(255,255,255,0.98);
+            border-radius: 2rem;
+            box-shadow: 0 8px 40px #4f8dff26;
+            padding: 32px 18px 18px 18px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #3b5177;
+            margin-top: 0;
+        }
+        .level-accordion {
+            border-radius: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 12px #b4c0e040;
+            background: #f7faff;
+            overflow: hidden;
+        }
+        .level-header {
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer;
+            padding: 16px 18px;
+            background: #def1fc;
+            border-bottom: 1px solid #d5eaff;
+            transition: background 0.18s;
+            font-size: 1.2rem;
+        }
+        .level-header:hover { background: #cbe6f7; }
+        .toggle-arrow {
+            font-size: 1.3em; margin-left: 14px; color: #209dc5;
+            transition: transform 0.2s;
+        }
+        .level-body {
+            padding: 20px 14px 8px 14px;
+            display: none;
+            animation: fadeIn .38s;
+        }
+        .level-body.active { display: block; }
+        .remove-btn {
+            background: none; border: none; color: #ef233c; font-size: 1.2rem;
+            font-weight: bold; border-radius: 50%; cursor: pointer; margin-left: 8px;
+            padding: 0.3em 0.8em; transition: background 0.18s;
+        }
+        .remove-btn:hover { background: #ffd6e1; }
+        .row { display: flex; gap: 26px; align-items: flex-end; margin: 14px 0 0 0;}
+        .col { flex: 1 1 0; min-width: 175px;}
+        .label {
+            font-size: 0.98rem; margin-bottom: 3px; color: #495d7a; font-weight: 500;
+        }
+        .hint {
+            display: block;
+            color: #a0aac4;
+            font-size: 0.93em;
+            margin-bottom: 2px;
+        }
+        .slider-group {margin-bottom: 12px;}
+        .slider-value {
+            font-weight: bold;
+            margin-left: 6px;
+            font-size: 1.07rem;
+            color: #267dbb;
+            min-width: 34px; display: inline-block;
+        }
+        input[type="range"] {
+            width: 96%; margin-top: 2px; accent-color: #209dc5;
+            transition: background 0.2s;
+            /* Fluidité améliorée */
+        }
+        input[type="range"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #80ffea77;
+        }
+        input[type="number"] {
+            width: 72px; padding: 2.5px 7px; border-radius: 8px;
+            border: 1px solid #dbeafe; background: #f4f9ff;
+            font-size: 1rem; margin-left: 4px;
+        }
+        .btns {margin-top: 12px;}
+        .add-btn, .dl-btn {
+            font-size: 1.1rem; border-radius: 14px; border: none; cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(90deg, #80ffea 40%, #5fbbff 100%);
+            box-shadow: 0 2px 10px #a7d0e5a8;
+            padding: 0.53em 1.4em;
+            margin-right: 8px;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        .add-btn:hover, .dl-btn:hover { background: #3bc6f6; color: #fff; }
+        .alert {
+            color: #e73300;
+            background: #fff1eb;
+            padding: 4px 12px;
+            border-radius: 9px;
+            font-size: 1.04em;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        @media (max-width: 800px) {
+            .container { padding: 12px 2vw 9px 2vw;}
+            .level-body { padding: 10px 4vw;}
+            .row {flex-direction: column; gap: 0;}
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🦍 Créateur de niveaux <span style="color:#00b4d8;">Wacky Monkey</span></h1>
+    <div class="btns">
+        <button class="add-btn" onclick="addLevel()">➕ Ajouter un niveau</button>
+        <button class="dl-btn" onclick="downloadJSON()">💾 Télécharger JSON</button>
+    </div>
+    <div id="levels"></div>
+</div>
+<script>
+let levelCount = 3;
+let levelsData = {};
+
+// --------- LOGIQUE AVANCÉE DE CONTRÔLE ----------
+// Utilitaire : clamp
+function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+// Calcule la valeur max possible pour un slider sans dépasser la somme
+function calcMaxSlider(level, obj, skip) {
+    // Pour plateforme, on veut que static + horizontal + vertical <= 1
+    let used = 0;
+    if (obj.static !== undefined) used += obj.static;
+    if (obj.horizontal !== undefined) used += obj.horizontal;
+    if (obj.vertical !== undefined) used += obj.vertical;
+    if (skip && obj[skip] !== undefined) used -= obj[skip];
+    return clamp(1 - (used - (skip ? obj[skip] : 0)), 0, 1);
+}
+
+// Pour éviter de dépasser la somme des types de plateforme :
+function safeSetPercent(idx, platKey, key, val) {
+    let o = levelsData[idx][platKey];
+    let percentVal = Math.round(val) / 100;
+    // Clamp la valeur max en fonction de la somme avec les autres
+    let others = ["static","horizontal","vertical"].filter(k => k !== key);
+    let sumOthers = others.reduce((s,k)=>s+(o[k]||0),0);
+    let maxAllowed = clamp(1 - sumOthers, 0, 1);
+    if (percentVal > maxAllowed) percentVal = maxAllowed;
+    o[key] = percentVal;
+    renderLevels();
+}
+// Même chose pour la "chance d'apparition" des deux types (1+2 ≤ 1)
+function safeSetPlatformChance(idx, which, val) {
+    let plat1 = levelsData[idx]["platform.tscn"];
+    let plat2 = levelsData[idx]["platform2.tscn"];
+    let percentVal = Math.round(val) / 100;
+    if (which === 1) {
+        if (percentVal + plat2.chance > 1) percentVal = 1 - plat2.chance;
+        plat1.chance = percentVal;
+    } else {
+        if (percentVal + plat1.chance > 1) percentVal = 1 - plat1.chance;
+        plat2.chance = percentVal;
+    }
+    renderLevels();
+}
+
+// ------------- UI/RENDER ----------------
+function getDefaultLevel(idx) {
+    return {
+        "player": { "jump_delta": 0, "gravity_delta": 0 },
+        "platform.tscn": { "chance": 1.0, "static": 1.0, "horizontal": 0.0, "vertical": 0.0, "breakable": 1.0, "persistent": 1.0, "bounce_mult": 1.0, "move_range": 200, "move_time": 4 },
+        "platform2.tscn": { "chance": 0.0, "static": 0.7, "horizontal": 0.0, "vertical": 0.3, "breakable": 0.5, "persistent": 0.0, "bounce_mult": 1.0, "move_range": 200, "move_time": 4 },
+        "banana.tscn": { "spawn_interval": 1.0, "max_simultaneous": 2 },
+        "peanut.tscn": { "spawn_interval": 30.0, "max_simultaneous": 1, "buff_multiplier": 3.0, "buff_duration": 4.0 },
+        "magnet.tscn": { "chance": 1.0, "spawn_interval": 20.0, "duration": 10.0, "radius": 900.0, "strength": 2000.0, "max_simultaneous": 1 }
+    }
+}
+
+function renderLevels() {
+    const levelsDiv = document.getElementById("levels");
+    levelsDiv.innerHTML = "";
+    const keys = Object.keys(levelsData).sort((a, b) => Number(a) - Number(b));
+    for (const idx of keys) {
+        const level = levelsData[idx];
+        const isOpen = (level._open !== false);
+
+        // Calcul des limites pour éviter les incohérences :
+        let p1 = level['platform.tscn'], p2 = level['platform2.tscn'];
+        // Type de plateforme 1
+        let p1max_static = Math.round(100 * clamp(1 - p1.horizontal - p1.vertical, 0, 1));
+        let p1max_horiz  = Math.round(100 * clamp(1 - p1.static - p1.vertical, 0, 1));
+        let p1max_vert   = Math.round(100 * clamp(1 - p1.static - p1.horizontal, 0, 1));
+        // Type de plateforme 2
+        let p2max_static = Math.round(100 * clamp(1 - p2.horizontal - p2.vertical, 0, 1));
+        let p2max_horiz  = Math.round(100 * clamp(1 - p2.static - p2.vertical, 0, 1));
+        let p2max_vert   = Math.round(100 * clamp(1 - p2.static - p2.horizontal, 0, 1));
+        // Probabilité d'apparition
+        let maxPlat1Chance = Math.round(100 * clamp(1 - p2.chance, 0, 1));
+        let maxPlat2Chance = Math.round(100 * clamp(1 - p1.chance, 0, 1));
+
+        // ALERTES en cas de mauvaise config
+        let alert = "";
+        if ((p1.static + p1.horizontal + p1.vertical) > 1.001)
+            alert = "⚠️ Plateforme 1 : la somme des types doit être ≤ 100%.";
+        if ((p2.static + p2.horizontal + p2.vertical) > 1.001)
+            alert = "⚠️ Plateforme 2 : la somme des types doit être ≤ 100%.";
+        if ((p1.chance + p2.chance) > 1.001)
+            alert = "⚠️ Trop de plateformes : la somme des probabilités doit être ≤ 100%.";
+
+        levelsDiv.innerHTML += `
+        <div class="level-accordion">
+            <div class="level-header" onclick="toggleLevel(${idx})">
+                <div>
+                    <b>Niveau ${idx}</b>
+                    <span style="font-size:0.98em;color:#7687a0;margin-left:18px;">
+                        (cliquez pour ${isOpen ? "replier" : "déplier"})
+                    </span>
+                </div>
+                <span class="toggle-arrow" style="transform:rotate(${isOpen ? '90deg' : '0deg'});">▶</span>
+                <button class="remove-btn" onclick="event.stopPropagation();removeLevel(${idx})">✕</button>
+            </div>
+            <div class="level-body${isOpen ? " active" : ""}">
+                ${alert ? `<div class="alert">${alert}</div>` : ""}
+                <div class="row">
+                    <div class="col slider-group">
+                        <span class="label">Apparition plateforme 1</span>
+                        <span class="hint">Proba (%) que ce type apparaisse dans le niveau. La somme des deux types ≤ 100%</span>
+                        <input type="range" min="0" max="${maxPlat1Chance}" step="1" value="${Math.round(p1.chance * 100)}" oninput="safeSetPlatformChance(${idx},1,this.value)">
+                        <span class="slider-value">${Math.round(p1.chance * 100)}%</span>
+                    </div>
+                    <div class="col slider-group">
+                        <span class="label">Apparition plateforme 2</span>
+                        <span class="hint">Proba (%) de l'autre type. Total ≤ 100%</span>
+                        <input type="range" min="0" max="${maxPlat2Chance}" step="1" value="${Math.round(p2.chance * 100)}" oninput="safeSetPlatformChance(${idx},2,this.value)">
+                        <span class="slider-value">${Math.round(p2.chance * 100)}%</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 1 – statique (%)</span>
+                        <span class="hint">Part des plateformes 1 immobiles (max auto)</span>
+                        <input type="range" min="0" max="${p1max_static}" step="1" value="${Math.round(p1.static * 100)}" oninput="safeSetPercent(${idx},'platform.tscn','static',this.value)">
+                        <span class="slider-value">${Math.round(p1.static * 100)}%</span>
+                    </div>
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 1 – horizontale (%)</span>
+                        <span class="hint">Part mobiles horizontalement</span>
+                        <input type="range" min="0" max="${p1max_horiz}" step="1" value="${Math.round(p1.horizontal * 100)}" oninput="safeSetPercent(${idx},'platform.tscn','horizontal',this.value)">
+                        <span class="slider-value">${Math.round(p1.horizontal * 100)}%</span>
+                    </div>
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 1 – verticale (%)</span>
+                        <span class="hint">Part mobiles verticalement</span>
+                        <input type="range" min="0" max="${p1max_vert}" step="1" value="${Math.round(p1.vertical * 100)}" oninput="safeSetPercent(${idx},'platform.tscn','vertical',this.value)">
+                        <span class="slider-value">${Math.round(p1.vertical * 100)}%</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 2 – statique (%)</span>
+                        <span class="hint">Part immobiles</span>
+                        <input type="range" min="0" max="${p2max_static}" step="1" value="${Math.round(p2.static * 100)}" oninput="safeSetPercent(${idx},'platform2.tscn','static',this.value)">
+                        <span class="slider-value">${Math.round(p2.static * 100)}%</span>
+                    </div>
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 2 – horizontale (%)</span>
+                        <span class="hint">Part mobiles horizontalement</span>
+                        <input type="range" min="0" max="${p2max_horiz}" step="1" value="${Math.round(p2.horizontal * 100)}" oninput="safeSetPercent(${idx},'platform2.tscn','horizontal',this.value)">
+                        <span class="slider-value">${Math.round(p2.horizontal * 100)}%</span>
+                    </div>
+                    <div class="col slider-group">
+                        <span class="label">Plateforme 2 – verticale (%)</span>
+                        <span class="hint">Part mobiles verticalement</span>
+                        <input type="range" min="0" max="${p2max_vert}" step="1" value="${Math.round(p2.vertical * 100)}" oninput="safeSetPercent(${idx},'platform2.tscn','vertical',this.value)">
+                        <span class="slider-value">${Math.round(p2.vertical * 100)}%</span>
+                    </div>
+                </div>
+                <!-- Ajoute ici les autres sliders déjà existants, peanut, banana, magnet etc., exactement comme avant -->
+                <!-- ...  -->
+            </div>
+        </div>
+        `;
+    }
+}
+
+
+function toggleLevel(idx) {
+    levelsData[idx]._open = !levelsData[idx]._open;
+    renderLevels();
+}
+function addLevel() {
+    let idx = 1;
+    while (levelsData[idx]) idx++;
+    levelsData[idx] = getDefaultLevel(idx);
+    renderLevels();
+}
+function removeLevel(idx) {
+    if (confirm("Supprimer ce niveau ?")) {
+        delete levelsData[idx];
+        renderLevels();
+    }
+}
+function safeSetPercent(idx, platKey, key, val) {
+    let o = levelsData[idx][platKey];
+    let percentVal = Math.round(val) / 100;
+    // Clamp en fonction des autres
+    let others = ["static","horizontal","vertical"].filter(k => k !== key);
+    let sumOthers = others.reduce((s,k)=>s+(o[k]||0),0);
+    let maxAllowed = clamp(1 - sumOthers, 0, 1);
+    if (percentVal > maxAllowed) percentVal = maxAllowed;
+    o[key] = percentVal;
+    renderLevels();
+}
+function safeSetPlatformChance(idx, which, val) {
+    let plat1 = levelsData[idx]["platform.tscn"];
+    let plat2 = levelsData[idx]["platform2.tscn"];
+    let percentVal = Math.round(val) / 100;
+    if (which === 1) {
+        if (percentVal + plat2.chance > 1) percentVal = 1 - plat2.chance;
+        plat1.chance = percentVal;
+    } else {
+        if (percentVal + plat1.chance > 1) percentVal = 1 - plat1.chance;
+        plat2.chance = percentVal;
+    }
+    renderLevels();
+}
+function setVal(idx, obj, key, val) {
+    if (["breakable", "persistent"].includes(key)) {
+        levelsData[idx][obj][key] = Number(val);
+    } else {
+        levelsData[idx][obj][key] = parseFloat(val);
+    }
+    renderLevels();
+}
+function downloadJSON() {
+    let out = {};
+    for (let idx of Object.keys(levelsData)) {
+        let level = Object.assign({}, levelsData[idx]);
+        delete level._open;
+        out[idx] = level;
+    }
+    let str = JSON.stringify(out, null, 2);
+    let blob = new Blob([str], {type:"application/json"});
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = "levels.json";
+    a.click();
+}
+
+// Initialiser avec 3 niveaux de base pour exemple
+if (Object.keys(levelsData).length === 0) {
+    for (let i = 1; i <= 3; i++) levelsData[i] = getDefaultLevel(i);
+}
+renderLevels();
+
+</script>
+</body>
+</html>

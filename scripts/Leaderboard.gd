@@ -1,66 +1,56 @@
-extends Control
+extends CanvasLayer
 
-@onready var container = $Panel/VBoxContainer
-@onready var btn_close = $Panel/Button
-
-# Liste locale des scores (dictionnaires {username, score})
-var local_scores : Array = []
+@onready var title_label         = $MainContainer/TitleLabel
+@onready var best_label          = $MainContainer/UserBestCard/BestLabel
+@onready var best_height_label   = $MainContainer/UserBestCard/BestHeightLabel
+@onready var scroll_container    = $MainContainer/ScrollCont
+@onready var list_container      = $MainContainer/ScrollCont/ListContainer
+@onready var return_button       = $MainContainer/ReturnButton
+@onready var row_template        = $MainContainer/ScrollCont/ListContainer/Panel
 
 func _ready():
-    btn_close.connect("pressed", Callable(self, "_on_close_pressed"))
-    hide()  # cacher au départ
-    load_scores_local()
+    return_button.pressed.connect(_on_return_pressed)
+    afficher_online()
+    _afficher_best_info()  # doit être appelé après le chargement du score local
 
-func show_leaderboard():
-    show()
-    display_leaderboard(local_scores)
+func _on_return_pressed():
+    get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
-func _on_close_pressed():
-    hide()
+func _afficher_best_info():
+    var best_score = ScoreManager.get_best_score()
+    var best_height = ScoreManager.get_best_height()
+    best_label.text = "🏆 Ton record : %d pts" % best_score
+    best_label.add_theme_font_size_override("font_size", 54)
+    best_label.add_theme_color_override("font_color", Color("#FFA900"))
+    best_height_label.text = "Meilleure hauteur atteinte : %dm" % best_height
+    best_height_label.add_theme_font_size_override("font_size", 42)
+    best_height_label.add_theme_color_override("font_color", Color("#2EF070"))
 
-# Charger les scores depuis un fichier local
-func load_scores_local():
-    var config = ConfigFile.new()
-    var err = config.load("user://leaderboard.cfg")
-    local_scores.clear()
-    if err == OK:
-        for i in range(config.get_section_keys("scores").size()):
-            var key = "score_%d" % i
-            if config.has_section_key("scores", key + "_username") and config.has_section_key("scores", key + "_value"):
-                var username = config.get_value("scores", key + "_username", "Anonyme")
-                var score = int(config.get_value("scores", key + "_value", 0))
-                local_scores.append({"username": username, "score": score})
-        # Trie décroissant sur score
-        local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
-    else:
-        print("Pas de fichier de scores local trouvé")
+func afficher_online():
+    FirestoreManager.fetch_top_scores(func(scores):
+        _afficher_scores(scores)
+    )
 
-# Sauvegarder les scores dans un fichier local
-func save_scores_local():
-    var config = ConfigFile.new()
-    config.clear()
-    for i in range(local_scores.size()):
-        var key = "score_%d" % i
-        config.set_value("scores", key + "_username", local_scores[i]["username"])
-        config.set_value("scores", key + "_value", local_scores[i]["score"])
-    var err = config.save("user://leaderboard.cfg")
-    if err != OK:
-        print("Erreur lors de la sauvegarde des scores")
-
-# Ajouter un score localement (avec tri et limite à 10)
-func add_score(username: String, score: int):
-    local_scores.append({"username": username, "score": score})
-    # Trie décroissant
-    local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
-    # Limite à 10 scores
-    if local_scores.size() > 10:
-        local_scores = local_scores.slice(0, 10)
-    save_scores_local()
-
-func display_leaderboard(scores: Array) -> void:
-    container.clear()
+func _afficher_scores(scores):
+    # Nettoie la liste (garde seulement la ligne header et le template si besoin)
+    var children = list_container.get_children()
+    for child in children:
+        # Garde le header (si présent) et le template invisible
+        if child != row_template and not child.name.begins_with("Header"):
+            child.queue_free()
+    # Commence l'affichage à partir de la ligne 1
     for i in range(scores.size()):
         var entry = scores[i]
-        var label = Label.new()
-        label.text = "%d. %s : %d" % [i + 1, entry["username"], entry["score"]]
-        container.add_child(label)
+        var new_row = row_template.duplicate()
+        new_row.visible = true
+
+        var hbox = new_row.get_node("HBoxContainer")
+        hbox.get_node("LabelPosition").text = str(i + 1)
+        hbox.get_node("LabelPseudo").text   = entry.get("pseudo", "")
+        hbox.get_node("LabelScore").text    = "%d pts" % entry.get("score", 0)
+        hbox.get_node("LabelHauteur").text  = "%d m" % entry.get("best_height", 0)
+
+        # Tu peux aussi colorer selon le rang
+        # if i == 0: new_row.modulate = Color(1, 0.9, 0.2)
+
+        list_container.add_child(new_row)

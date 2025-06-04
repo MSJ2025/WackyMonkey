@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://7m7ltil4umdx"]
+[gd_scene load_steps=13 format=3 uid="uid://7m7ltil4umdx"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_7lnrl"]
 [ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="2_hl68v"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bcjnjjejfevy1" path="res://assets/logo.png" id="4_pwct6"]
 [ext_resource type="Texture2D" uid="uid://b4btcldptwdvk" path="res://assets/onkey.png" id="5_plcue"]
 [ext_resource type="Texture2D" uid="uid://et3ecf5kjri" path="res://assets/acky.png" id="6_qt48a"]
+[ext_resource type="Texture2D" uid="uid://c3k3mjxarknx5" path="res://assets/encart.png" id="7_k04n6"]
+[ext_resource type="FontFile" uid="uid://dbqw3kdwxgfi8" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="8_mhb2b"]
 
 [sub_resource type="Animation" id="Animation_ktls6"]
 length = 8.0
@@ -94,6 +96,14 @@ _data = {
 "new_animation": SubResource("Animation_pyac8")
 }
 
+[sub_resource type="LabelSettings" id="LabelSettings_vprpp"]
+font = ExtResource("8_mhb2b")
+font_size = 70
+font_color = Color(0.984314, 0.654902, 0.0627451, 1)
+shadow_size = 20
+shadow_color = Color(0.498039, 0.203922, 0, 1)
+shadow_offset = Vector2(2, 1)
+
 [node name="MainMenu" type="CanvasLayer"]
 script = ExtResource("1_7lnrl")
 
@@ -171,6 +181,11 @@ scale = Vector2(3, 3)
 visible = false
 layout_mode = 2
 
+[node name="PseudoLineEdit" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Entrez votre nom de joueur"
+alignment = 1
+
 [node name="PlayButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "JOUER"
@@ -218,3 +233,30 @@ texture_filter = 1
 position = Vector2(728, 327)
 scale = Vector2(0.66416, 0.66416)
 texture = ExtResource("6_qt48a")
+
+[node name="encart" type="TextureRect" parent="."]
+anchors_preset = -1
+offset_left = 301.0
+offset_top = 398.0
+offset_right = 1423.0
+offset_bottom = 1422.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("7_k04n6")
+
+[node name="LabelPseudo" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -264.5
+offset_top = -696.0
+offset_right = 234.5
+offset_bottom = -541.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Pseudo"
+label_settings = SubResource("LabelSettings_vprpp")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true

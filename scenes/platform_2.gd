@@ -28,22 +28,17 @@ func get_bounce_mult() -> float:
 func _ready() -> void:
     origin_x = global_position.x
 
-func _start_moving_horizontal() -> void:
-    var screen_w = get_viewport_rect().size.x
+func _start_moving_horizontal(move_range = 200.0, move_time = 4.0) -> void:
+    var origin = global_position.x
     var tw = create_tween().set_loops()
-    tw.tween_property(self, "global_position:x",
-        origin_x + screen_w * 0.5, travel_time * 0.5)
-    tw.tween_property(self, "global_position:x",
-        origin_x - screen_w * 0.5, travel_time * 0.5)
+    tw.tween_property(self, "global_position:x", origin + move_range, move_time * 0.5)
+    tw.tween_property(self, "global_position:x", origin - move_range, move_time * 0.5)
 
-func _start_moving_vertical() -> void:
-    var origin_y = global_position.y
-    var screen_h = get_viewport_rect().size.y
+func _start_moving_vertical(move_range = 200.0, move_time = 4.0) -> void:
+    var origin = global_position.y
     var tw = create_tween().set_loops()
-    tw.tween_property(self, "global_position:y",
-        origin_y + screen_h * 0.5, travel_time * 0.5)
-    tw.tween_property(self, "global_position:y",
-        origin_y - screen_h * 0.5, travel_time * 0.5)
+    tw.tween_property(self, "global_position:y", origin + move_range, move_time * 0.5)
+    tw.tween_property(self, "global_position:y", origin - move_range, move_time * 0.5)
 
 func break_platform() -> void:
     if not breakable:
@@ -56,3 +51,4 @@ func break_platform() -> void:
     var fade = create_tween()
     fade.tween_property(anim, "modulate:a", 0.0, 0.5)
     fade.tween_callback(Callable(self, "queue_free"))
+    

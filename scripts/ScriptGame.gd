@@ -1,4 +1,3 @@
-# res://scripts/ScriptGame.gd
 extends Node2D
 
 # — PackedScenes & JSON —
@@ -9,6 +8,8 @@ extends Node2D
 @export var peanut_scene       : PackedScene
 @export var initial_platforms  : int    = 10
 @export var vertical_gap       : float  = 200.0
+@export var score_line_scene: PackedScene
+ 
 
 # — État de jeu —
 var level     : int        = 1
@@ -25,11 +26,19 @@ var best_player_y    : float = 0.0
 var height_score     : int   = 0
 var banana_score     : int   = 0
 
-# — Buff cacahuète —
+# — Buffs & bonus —
 var _peanut_active          : bool  = false
 var _player_base_speed      : float = 0.0
 var _player_base_jump_force : float = 0.0
+var _magnet_active : bool = false
+var _magnet_radius : float = 0.0
+var _magnet_strength : float = 0.0
 
+
+const PIXELS_PAR_METRE = 100.0  # Par exemple : 100 pixels = 1 mètre
+var PALIER_METRES = 100  # ou 300 selon besoin
+var prochain_palier := 1
+var palier_y := 0.0  # Premier palier à atteindre après le début (niveau 2)
 
 # — Nodes —
 @onready var camera2d        : Camera2D          = $Camera2D
@@ -39,60 +48,63 @@ var _player_base_jump_force : float = 0.0
 @onready var label_level     : Label             = $CanvasLayer/Level
 @onready var banana_spawner  : Timer             = $BananaSpawner
 @onready var peanut_spawner  : Timer             = $PeanutSpawner
+@onready var magnet_spawner  : Timer             = $MagnetSpawner
 @onready var game_over_layer : CanvasLayer       = $GameOverLayer
 @onready var banana_sfx      : AudioStreamPlayer = $BananaPlayer
 @onready var peanut_sfx      : AudioStreamPlayer = $PeanutPlayer
-@onready var magnet_spawner : Timer = $MagnetSpawner
-@onready var magnet_sfx     : AudioStreamPlayer = $MagnetPlayer
-@onready var level_up_sfx : AudioStreamPlayer = $LevelUpPlayer
-@onready var lineedit_pseudo = $GameOverLayer/VBoxContainer/LineEdit_Pseudo
-@onready var pseudo_popup = $GameOverLayer/PseudoPopup
-@onready var popup_lineedit = pseudo_popup.get_node("PopupLineEdit")
-@onready var popup_ok_button = pseudo_popup.get_node("PopupOkButton")
+@onready var magnet_sfx      : AudioStreamPlayer = $MagnetPlayer
+@onready var level_up_sfx    : AudioStreamPlayer = $LevelUpPlayer
+@onready var burp_sfx      : AudioStreamPlayer = $BurpPlayer
+@onready var level_line = $LevelLine
+@onready var label_level_line = $LevelLine/LabelLevelLine
 
-var _magnet_active : bool = false
-var _magnet_radius : float = 0.0
-var _magnet_strength : float = 0.0
 
 var _pending_action: String = ""
 
 func _ready() -> void:
-    # → 1) charge la config JSON pour ce niveau
+    print("LevelLine ?", level_line)
+    print("LabelLevelLine ?", label_level_line)
+    # — 1) Charge la config JSON pour ce niveau
     level_cfg = LevelManager.get_config_for(level)
     print("▶️ ScriptGame, niveau %d, cfg :" % level, level_cfg)
     print_debug("► Level_cfg chargé pour le niveau %d : %s" % [level, level_cfg])
+    FirestoreManager.fetch_top_scores(func(scores):
+        afficher_leaderboard(scores)
+)
 
-    # → 2) setup Game Over
+    # — 2) Setup Game Over
     game_over_layer.visible = false
     var btn = game_over_layer.get_node_or_null("ColorRect/VBoxContainer/ReplayButton") as Button
     if btn:
         btn.connect("pressed", Callable(self, "_on_replay_pressed"))
 
-    # → 3) création du sol, player, plateforme initiales & caméra
+    # — 3) Création du sol, player, plateformes initiales & caméra
     _create_ground_and_player()
     _spawn_initial_platforms()
 
-    # → 4) repères de hauteur
+    # — 4) Repères de hauteur
     initial_player_y = player.global_position.y
     best_player_y    = initial_player_y
+    prochain_palier = 1
+    _update_palier_y()
+    _affiche_palier()
 
-    # → 5) scores & UI
+    # — 5) Scores & UI
     height_score  = 0
     banana_score  = 0
     label_score.text  = "%d m"        % height_score
     label_banana.text = "Bananes: %d" % banana_score
     label_level.text  = "Niveau: %d"  % level
 
-    # → 6) murs et bordures
+    # — 6) Murs et bordures
     setup_borders()
 
-    # → 7) configure les spawners
+    # — 7) Configure les spawners
     var bcfg = level_cfg.get("banana.tscn", {})
     banana_spawner.wait_time  = bcfg.get("spawn_interval", 2.0)
     banana_spawner.one_shot   = false
     banana_spawner.autostart  = true
     banana_spawner.connect("timeout", Callable(self, "_on_BananaSpawner_timeout"))
-
 
     var pcfg = level_cfg.get("peanut.tscn", {})
     peanut_spawner.wait_time  = pcfg.get("spawn_interval", 30.0)
@@ -107,64 +119,43 @@ func _ready() -> void:
     magnet_spawner.connect("timeout", Callable(self, "_on_MagnetSpawner_timeout"))
     print("▶ MagnetSpawner configuré :", magnet_spawner.wait_time, "s, autostart =", magnet_spawner.autostart)
 
-    var saved_pseudo = load_pseudo()
+    # — 8) Chargement pseudo utilisateur
+    var saved_pseudo = ScoreManager.load_pseudo()
     if saved_pseudo != "":
-        lineedit_pseudo.text = saved_pseudo
+        var pseudo = ScoreManager.load_pseudo()
         
-    popup_ok_button.connect("pressed", Callable(self, "_on_pseudo_popup_ok_pressed"))
-    pseudo_popup.connect("popup_hide", Callable(self, "_on_pseudo_popup_closed"))
-        
-   
-        
+    
+
+func _reset_level_line():
+    # Place la barre au premier palier à venir (Niveau 2)
+    var next_palier_y = initial_player_y - PALIER_METRES
+    _affiche_palier()
+
 func _on_pseudo_text_changed(new_text):
-    save_pseudo(new_text)
-    
-func save_pseudo(pseudo: String) -> void:
-    var config = ConfigFile.new()
-    config.set_value("user", "pseudo", pseudo)
-    config.save("user://user_settings.cfg")
+    ScoreManager.save_pseudo(new_text)
 
-func load_pseudo() -> String:
-    var config = ConfigFile.new()
-    var err = config.load("user://user_settings.cfg")
-    if err == OK:
-        return config.get_value("user", "pseudo", "")
-    return ""
-    
-func _on_pseudo_popup_ok_pressed() -> void:
-    var pseudo = popup_lineedit.text.strip_edges()
-    if pseudo == "":
-        show_message("Le pseudo ne peut pas être vide.")
-        return
-    lineedit_pseudo.text = pseudo
-    save_pseudo(pseudo)
-    pseudo_popup.hide()
-    game_over_layer.get_node("ReplayButton").disabled = false
-    game_over_layer.get_node("MenuButton").disabled = false
-    
-    # Lance l'action en attente (replay ou menu)
-    if _pending_action == "replay":
-        _pending_action = ""
-        _save_and_go_to_scene("res://scenes/Game.tscn")
-    elif _pending_action == "menu":
-        _pending_action = ""
-        _save_and_go_to_scene("res://scenes/MainMenu.tscn")
-    
-    
-func save_score_local(score: int) -> void:
-    var config = ConfigFile.new()
-    config.set_value("scores", "best_score", score)
-    var err = config.save("user://scores.cfg")
-    if err != OK:
-        print("Erreur lors de la sauvegarde du score local")
-    
 
-func _process(_delta: float) -> void:
-    # 1) mets à jour le sommet atteint
+func _process(delta: float) -> void:
+# PALIER : gestion barre de niveau
+    var current_y = player.global_position.y
+
+    # Calcul du bas de l'écran (coordonnée monde)
+    var bottom_screen_y = camera2d.global_position.y + get_viewport_rect().size.y * 0.5
+
+    # Tant que la barre du palier est encore visible, elle reste affichée
+    if palier_y > bottom_screen_y:
+        _cache_palier()
+        # La barre actuelle a quitté l'écran : prépare la suivante
+        prochain_palier += 1
+        _update_palier_y()
+        _affiche_palier()
+        
+        
+    # Record de la hauteur maximale atteinte
     if player.global_position.y < best_player_y:
         best_player_y = player.global_position.y
-
-   # 2) game over si trop bas, seuil lu au runtime dans level_cfg
+        
+    # 2) game over si trop bas, seuil lu au runtime dans level_cfg
     var seuil_chute: float = level_cfg.get("game_over_fall", 1200.0)
     if player.global_position.y > best_player_y + seuil_chute:
         _on_game_over()
@@ -179,11 +170,11 @@ func _process(_delta: float) -> void:
     camera2d.global_position.y = min(player.global_position.y, initial_cam_y)
 
     # 5) height_score & palier tous les 500m
-    var climbed = int((initial_player_y - player.global_position.y) / 100.0)
+    var climbed = int((initial_player_y - player.global_position.y) / PIXELS_PAR_METRE)
     if climbed > height_score:
         height_score = climbed
         label_score.text = "%d m" % height_score
-        if height_score >= level * 300:
+        if height_score >= level * PALIER_METRES:
             _level_up()
 
     # 6) nettoyage
@@ -192,119 +183,120 @@ func _process(_delta: float) -> void:
         if b.global_position.y > bottom: b.queue_free()
     for p in get_tree().get_nodes_in_group("peanuts"):
         if p.global_position.y > bottom: p.queue_free()
-    # 6-bis) Nettoyage des magnets hors écran
     for m in get_tree().get_nodes_in_group("magnets"):
-        if m.global_position.y > bottom:
-            m.queue_free()
-        
-      # Attirer les bananes si aimant actif
+        if m.global_position.y > bottom: m.queue_free()
+
+    # Aimant (magnet)
     if _magnet_active:
         for b in get_tree().get_nodes_in_group("bananas"):
             var dist = b.global_position.distance_to(player.global_position)
             if dist < _magnet_radius:
                 var dir = (player.global_position - b.global_position).normalized()
-                b.global_position += dir * _magnet_strength * _delta
-        
+                b.global_position += dir * _magnet_strength * delta
+                
 
-var local_scores : Array = []
+    
+func _update_palier_y():
+    palier_y = initial_player_y - (PIXELS_PAR_METRE * PALIER_METRES * prochain_palier)
 
-func load_scores_local():
-    var config = ConfigFile.new()
-    var err = config.load("user://leaderboard.cfg")
-    local_scores.clear()
-    if err == OK:
-        for i in range(config.get_section_keys("scores").size() / 2): # deux clés par score (pseudo + valeur)
-            var key = "score_%d" % i
-            var username = config.get_value("scores", key + "_username", "Anonyme")
-            var score = int(config.get_value("scores", key + "_value", 0))
-            local_scores.append({"username": username, "score": score})
-        local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
-    else:
-        print("Pas de fichier de scores local trouvé")
+func _affiche_palier():
+    level_line.visible = true
+    label_level_line.visible = true
+    level_line.global_position.y = palier_y
+    label_level_line.text = "NIVEAU %d" % (prochain_palier + 1)
 
-func save_scores_local():
-    var config = ConfigFile.new()
-    config.clear()
-    for i in range(local_scores.size()):
-        var key = "score_%d" % i
-        config.set_value("scores", key + "_username", local_scores[i]["username"])
-        config.set_value("scores", key + "_value", local_scores[i]["score"])
-    var err = config.save("user://leaderboard.cfg")
-    if err != OK:
-        print("Erreur lors de la sauvegarde des scores")
-
-func add_score_local(username: String, score: int) -> void:
-    local_scores.append({"username": username, "score": score})
-    local_scores.sort_custom(func(a,b): return int(b["score"]) - int(a["score"]))
-    if local_scores.size() > 10:
-        local_scores = local_scores.slice(0, 10)
-    save_scores_local()
-
+func _cache_palier():
+    level_line.visible = false
+    label_level_line.visible = false
+    
+    
 func _on_game_over() -> void:
     if game_over_layer.visible: return
 
-    #get_tree().paused = true
     print("Appel GameOverLayer.show_results avec : height_score =", height_score, "banana_score =", banana_score)
 
-    # Appelle l’animation d’affichage du score sur GameOverLayer
-    $GameOverLayer.show_results(height_score, banana_score)
-    add_score_local(lineedit_pseudo.text.strip_edges(), height_score)
+    var score_final = int(height_score * 0.5 + banana_score * 5)
+    var pseudo = ScoreManager.load_pseudo()
+    if pseudo == "":
+        pseudo = "Anonyme"
+
+    var device_id = OS.get_unique_id() # ou ta méthode de récupération device id
+
+    # Enregistrement en local
+    ScoreManager.add_score(pseudo, score_final)
+
+    # Envoi Firestore EN LIGNE
+    FirestoreManager.submit_score_if_best(
+        pseudo,          # 1
+        score_final,     # 2
+        device_id,       # 3
+        height_score,    # 4 (la meilleure hauteur atteinte)
+        func(result):    # 5
+            print("Score soumis :", result)
+    )
+
+    game_over_layer.show_results(height_score, banana_score)
 
 func _on_replay_pressed() -> void:
-    if not _check_pseudo():
-        _pending_action = "replay"
-        pseudo_popup.popup_centered()
-        return
-    _save_and_go_to_scene("res://scenes/Game.tscn")  # adapte le chemin
+    _save_and_go_to_scene("res://scenes/Game.tscn")  # <-- ICI
 
 func _on_menu_pressed() -> void:
-    if not _check_pseudo():
-        _pending_action = "menu"
-        pseudo_popup.popup_centered()
-        return
-    _save_and_go_to_scene("res://scenes/MainMenu.tscn")  # adapte le chemin
+    _save_and_go_to_scene("res://scenes/MainMenu.tscn")  # <-- ICI
     
-    
-    
-func _check_pseudo() -> bool:
-    var pseudo = lineedit_pseudo.text.strip_edges()
-    if pseudo == "":
-        show_message("Veuillez saisir un pseudo avant de continuer.")
-        return false
-    save_pseudo(pseudo)
-    return true
-
 func _save_and_go_to_scene(scene_path: String) -> void:
-    add_score_local(lineedit_pseudo.text.strip_edges(), height_score)
-    save_scores_local()
-    get_tree().change_scene(scene_path)
-    
-    
+    get_tree().change_scene_to_file(scene_path)
+
 func show_message(msg: String) -> void:
     print(msg)
-    # OU, si tu as un Label prévu pour les messages, mets à jour son texte ici.
+    # Ou mets à jour un Label prévu à cet effet si tu veux une UI
+
+
+func _spawn_initial_platforms():
+    var start_y = ground_y - vertical_gap
+    for i in range(initial_platforms):
+        spawn_platform(start_y - i * vertical_gap)
+    highest_y = start_y - (initial_platforms - 1) * vertical_gap
+
+func setup_borders():
+    var size: Vector2 = get_viewport_rect().size
+    var t: float = 10.0
+    for x in [0, size.x]:
+        var wall = StaticBody2D.new()
+        var r    = RectangleShape2D.new()
+        r.extents = Vector2(t, size.y * 0.5)
+        var col  = CollisionShape2D.new()
+        col.shape = r
+        wall.position = Vector2(x, size.y * 0.5)
+        wall.add_child(col)
+        add_child(wall)
+    var ui = CanvasLayer.new()
+    add_child(ui)
+    for x in [0, size.x]:
+        var bar = ColorRect.new()
+        bar.color    = Color(1,1,1,1)
+        bar.position = Vector2(x - t * 0.5, 0)
+        bar.size     = Vector2(t, size.y)
+        ui.add_child(bar)
 
 func _level_up() -> void:
     level += 1
     label_level.text = "Niveau: %d" % level
-    # recharge la config
     level_cfg = LevelManager.get_config_for(level)
     print("⬆️ Palier %d, nouvelle cfg :" % level, level_cfg)
-    # si tu veux piloter jump/gravity depuis JSON :
+    # Positionne la barre du niveau SUIVANT
+    var next_palier_y = initial_player_y - (level * PALIER_METRES)
+    _affiche_palier()
+    # Améliorations de progression
     var pj = level_cfg.get("player", {})
     player.jump_force += pj.get("jump_delta", 0)
     player.gravity    += pj.get("gravity_delta", 0)
-
-     # --- Joue le son de level up ici ---
     if level_up_sfx:
         level_up_sfx.play()
+        
 
 func spawn_platform(y_pos: float) -> Node2D:
-    # ── 1) Lecture des configs JSON pour les deux types ──
     var p1_cfg = level_cfg.get("platform.tscn", {})
     var p2_cfg = level_cfg.get("platform2.tscn", {})
-
-    # ── 2) Poids pour le tirage pondéré ──
     var w1 = p1_cfg.get("chance", 1.0)
     var w2 = p2_cfg.get("chance", 0.0)
     var total = w1 + w2
@@ -312,71 +304,56 @@ func spawn_platform(y_pos: float) -> Node2D:
     var use_mobile = false
     if draw >= w1:
         use_mobile = true
-
-    # ── 3) Instanciation de la bonne scène ──
-    var scene_ref: PackedScene
-    if use_mobile:
-        scene_ref = platform2_scene
-    else:
-        scene_ref = platform_scene
+    var scene_ref: PackedScene = platform2_scene if use_mobile else platform_scene
     var plat = scene_ref.instantiate() as Node2D
     add_child(plat)
-    var type_name = ""
-    if use_mobile:
-        type_name = "platform2"
-    else:
-        type_name = "platform"
-    
-
-    # ── 4) Positionnement aléatoire X + Y fixe ──
+    var cfg: Dictionary = p2_cfg if use_mobile else p1_cfg
     var vw = get_viewport_rect().size.x
     plat.position = Vector2(randi_range(100, int(vw - 100)), y_pos)
-
-    # ── 5) Collision one-way ──
     if plat.has_node("CollisionShape2D"):
         var col = plat.get_node("CollisionShape2D") as CollisionShape2D
         col.one_way_collision = true
         col.one_way_collision_margin = 4.0
-
-    # ── 6) Breakable & Persistent selon JSON ──
-    var cfg: Dictionary
-    if use_mobile:
-        cfg = p2_cfg
-    else:
-        cfg = p1_cfg
-
     var is_breakable  = randf() < cfg.get("breakable", 0.0)
     var is_persistent = randf() < cfg.get("persistent", 0.0)
-    
     if plat.has_method("set_breakable"):
         plat.call_deferred("set_breakable", is_breakable)
     if plat.has_method("set_persistent"):
         plat.call_deferred("set_persistent", is_persistent)
-
-    # ── 6.1) Bounce multiplier depuis JSON ──
     var bm = cfg.get("bounce_mult", 1.0)
-    
     if plat.has_method("set_bounce_mult"):
         plat.call_deferred("set_bounce_mult", bm)
-
-    # ── 7) Mouvement static / horizontal / vertical ──
-    var rnd2 = randf()
-    var s    = cfg.get("static",     0.0)
-    var h    = cfg.get("horizontal", 0.0)
-    var v    = cfg.get("vertical",   0.0)
-    
-    
+        
+    # -----------------------
+    # *** AJOUT ICI ***
+    # Gestion du mode de mouvement (static, horizontal, vertical)
+    var prob_static = cfg.get("static", 1.0)
+    var prob_horizontal = cfg.get("horizontal", 0.0)
+    var prob_vertical = cfg.get("vertical", 0.0)
+    var move_draw = randf()
+    var mode = "static"
+    if move_draw < prob_static:
+        mode = "static"
+    elif move_draw < prob_static + prob_horizontal:
+        mode = "horizontal"
+    else:
+        mode = "vertical"
+    var move_range = cfg.get("move_range", 200.0)
+    var move_time = cfg.get("move_time", 4.0)
+    if mode == "horizontal" and plat.has_method("_start_moving_horizontal"):
+        plat.call_deferred("_start_moving_horizontal", move_range, move_time)
+    elif mode == "vertical" and plat.has_method("_start_moving_vertical"):
+        plat.call_deferred("_start_moving_vertical", move_range, move_time)
+    # -----------------------
 
     return plat
 
 func _on_BananaSpawner_timeout() -> void:
     var bcfg = level_cfg.get("banana.tscn", {})
     var max_b = bcfg.get("max_simultaneous", 2)
-    # Si on n’a pas atteint le maximum…
     if get_tree().get_nodes_in_group("bananas").size() < max_b:
-        var b = banana_scene.instantiate() as Area2D
+        var b = banana_scene.instantiate() as StaticBody2D
         b.add_to_group("bananas")
-        # positionne comme avant
         var size  = get_viewport_rect().size
         var x     = randf_range(20.0, size.x-20.0)
         var topY  = camera2d.global_position.y - size.y*0.5
@@ -385,20 +362,34 @@ func _on_BananaSpawner_timeout() -> void:
         add_child(b)
         b.connect("collected", Callable(self, "_on_banana_collected"))
 
-
 func _on_banana_collected() -> void:
+    print("Banana collected, play sound")
     banana_score += 1
     label_banana.text = "Bananes: %d" % banana_score
-    banana_sfx.play()
+    print("banana_sfx is: ", banana_sfx)
+    if banana_sfx:
+        print("banana_sfx exists, playing sound")
+        if banana_sfx.playing:
+            print("banana_sfx is already playing, stopping first")
+            banana_sfx.stop()
+        banana_sfx.play()
+    else:
+        print("banana_sfx is null or not assigned")
+    
+    if banana_score % 10 == 0:
+        print("Playing burp sound")
+        burp_sfx.play()
+        
+        # Option 2 (plus propre) : attendre la fin de banana_sfx avant de jouer burp_sfx
+        # Connecte le signal "finished" si tu veux cette option :
+        # banana_sfx.finished.connect(_on_banana_sfx_finished)
 
 func _on_PeanutSpawner_timeout() -> void:
     var pcfg = level_cfg.get("peanut.tscn", {})
     var max_p = pcfg.get("max_simultaneous", 1)
-    # si on n’a pas déjà trop de cacahuètes à l’écran…
     if get_tree().get_nodes_in_group("peanuts").size() < max_p:
-        var p = peanut_scene.instantiate() as Area2D
+        var p = peanut_scene.instantiate() as StaticBody2D
         p.add_to_group("peanuts")
-        # positionnement comme avant…
         var size = get_viewport_rect().size
         var x    = randf_range(20.0, size.x - 20.0)
         var topY = camera2d.global_position.y - size.y * 0.5
@@ -427,22 +418,20 @@ func _spawn_bonus_banana_line() -> void:
     var vh: float = get_viewport_rect().size.y
     var x_pos     = player.global_position.x
     for i in range(50):
-        var b = banana_scene.instantiate() as Area2D
+        var b = banana_scene.instantiate() as StaticBody2D
         b.add_to_group("bananas")
         b.position = Vector2(x_pos,
             camera2d.global_position.y - vh * 0.5 - i * (vh / 10))
         add_child(b)
         b.connect("collected", Callable(self, "_on_banana_collected"))
-        
-        
+
 func _on_MagnetSpawner_timeout() -> void:
     var mcfg = level_cfg.get("magnet.tscn", {})
     print("🧲 _on_MagnetSpawner_timeout — chance:", mcfg.get("chance", 0.0))
     if randf() < mcfg.get("chance", 0.0) \
     and get_tree().get_nodes_in_group("magnets").size() < mcfg.get("max_simultaneous", 1):
-        var m = preload("res://scenes/magnet.tscn").instantiate() as Area2D
+        var m = preload("res://scenes/magnet.tscn").instantiate() as StaticBody2D
         m.add_to_group("magnets")
-        # positionne juste au‐dessus de l’écran
         var size = get_viewport_rect().size
         var x = randf_range(20.0, size.x - 20.0)
         var y = camera2d.global_position.y - size.y * 0.6
@@ -461,13 +450,9 @@ func _on_Magnet_collected(magnet_node: Node) -> void:
     _magnet_active   = true
     _magnet_radius   = mcfg.get("radius", 0.0)
     _magnet_strength = mcfg.get("strength", 0.0)
-    # on attend la durée définie dans le JSON
     await get_tree().create_timer(mcfg.get("duration", 5.0)).timeout
     _magnet_active = false
     print("🧲 Magnet désactivé")
-
-
-
 
 func _create_ground_and_player() -> void:
     var vw: float = get_viewport_rect().size.x
@@ -478,36 +463,20 @@ func _create_ground_and_player() -> void:
     var gh    = shape.extents.y * 2.0
     ground.position = Vector2(vw * 0.5, vh - gh * 0.5)
     ground_y        = ground.position.y
+
+    # PLACEMENT DU PLAYER (INDISPENSABLE !)
     player.global_position = Vector2(
         ground.position.x,
         ground.position.y - shape.extents.y - 1
     )
     initial_cam_y = vh * 0.6
     camera2d.global_position.y = initial_cam_y
-
-func _spawn_initial_platforms() -> void:
-    var start_y = ground_y - vertical_gap
-    for i in range(initial_platforms):
-        spawn_platform(start_y - i * vertical_gap)
-    highest_y = start_y - (initial_platforms - 1) * vertical_gap
-
-func setup_borders() -> void:
-    var size: Vector2 = get_viewport_rect().size
-    var t: float = 10.0
-    for x in [0, size.x]:
-        var wall = StaticBody2D.new()
-        var r    = RectangleShape2D.new()
-        r.extents = Vector2(t, size.y * 0.5)
-        var col  = CollisionShape2D.new()
-        col.shape = r
-        wall.position = Vector2(x, size.y * 0.5)
-        wall.add_child(col)
-        add_child(wall)
-    var ui = CanvasLayer.new()
-    add_child(ui)
-    for x in [0, size.x]:
-        var bar = ColorRect.new()
-        bar.color    = Color(1,1,1,1)
-        bar.position = Vector2(x - t * 0.5, 0)
-        bar.size     = Vector2(t, size.y)
-        ui.add_child(bar)
+    
+func afficher_leaderboard(scores: Array):
+    for entry in scores:
+        var line = score_line_scene.instantiate()
+        var score_y = initial_player_y - (entry.best_height * PIXELS_PAR_METRE)
+        line.position = Vector2(0, score_y)
+        add_child(line) # <-- D'abord on l'ajoute à la scène !
+        line.set_score(entry.pseudo, entry.best_height)
+        print("Ajout ligne pour %s à %d m (y=%d)" % [entry.pseudo, entry.best_height, score_y])

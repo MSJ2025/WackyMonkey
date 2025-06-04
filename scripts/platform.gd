@@ -1,7 +1,7 @@
 # res://scenes/platform.gd
 extends StaticBody2D
 
-@export var travel_range : float = 150.0    # amplitude du ping-pong
+@export var travel_range : float = 1500.0    # amplitude du ping-pong
 @export var travel_time  : float = 3.0      # durée aller+retour
 
 @export var breakable    : bool  = true
@@ -23,21 +23,17 @@ func set_bounce_mult(b: float) -> void:
 func get_bounce_mult() -> float:
     return bounce_mult
 
-func _start_moving_horizontal() -> void:
+func _start_moving_horizontal(move_range = 200.0, move_time = 4.0) -> void:
     var origin = global_position.x
     var tw = create_tween().set_loops()
-    tw.tween_property(self, "global_position:x",
-        origin + travel_range, travel_time * 0.5)
-    tw.tween_property(self, "global_position:x",
-        origin - travel_range, travel_time * 0.5)
+    tw.tween_property(self, "global_position:x", origin + move_range, move_time * 0.5)
+    tw.tween_property(self, "global_position:x", origin - move_range, move_time * 0.5)
 
-func _start_moving_vertical() -> void:
+func _start_moving_vertical(move_range = 200.0, move_time = 4.0) -> void:
     var origin = global_position.y
     var tw = create_tween().set_loops()
-    tw.tween_property(self, "global_position:y",
-        origin + travel_range, travel_time * 0.5)
-    tw.tween_property(self, "global_position:y",
-        origin - travel_range, travel_time * 0.5)
+    tw.tween_property(self, "global_position:y", origin + move_range, move_time * 0.5)
+    tw.tween_property(self, "global_position:y", origin - move_range, move_time * 0.5)
 
 func break_platform() -> void:
     if not breakable:
