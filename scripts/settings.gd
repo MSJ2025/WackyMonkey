@@ -129,7 +129,7 @@ func _on_ok_pseudo():
     show_message("Pseudo changé !")
 
 func _on_reset_scores():
-    ScoreManager.reset() # À adapter à ta logique (voir plus bas)
+    ScoreManager.reset_local_scores()
     show_message("Scores remis à zéro !")
 
 func _on_back_pressed():
