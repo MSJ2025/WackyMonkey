@@ -362,7 +362,7 @@ func _on_BananaSpawner_timeout() -> void:
         add_child(b)
         b.connect("collected", Callable(self, "_on_banana_collected"))
 
-func _on_banana_collected() -> void:
+func _on_banana_collected(banana_node: Node) -> void:
     print("Banana collected, play sound")
     banana_score += 1
     label_banana.text = "Bananes: %d" % banana_score
@@ -375,6 +375,8 @@ func _on_banana_collected() -> void:
         banana_sfx.play()
     else:
         print("banana_sfx is null or not assigned")
+
+    banana_node.queue_free()
     
     if banana_score % 10 == 0:
         print("Playing burp sound")
