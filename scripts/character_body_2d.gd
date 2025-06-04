@@ -81,4 +81,6 @@ func _on_BonusArea_body_entered(body):
 func collect_bonus(bonus_node):
     print("Bonus collecté :", bonus_node.name)
     # Ici, tu peux ajouter un son, augmenter le score, afficher un effet, etc.
+    if bonus_node.has_signal("collected"):
+        bonus_node.emit_signal("collected", bonus_node)
     bonus_node.queue_free()
