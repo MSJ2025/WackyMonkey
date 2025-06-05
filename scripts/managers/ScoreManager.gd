@@ -73,6 +73,11 @@ func reset_local_scores():
     var config = ConfigFile.new()
     config.set_value("score", "local_score", 0)
     config.save("user://user_data.cfg")
+
+func reset() -> void:
+    leaderboard.clear()
+    save()
+    reset_local_scores()
     
 func get_best_score() -> int:
     if leaderboard.is_empty():
