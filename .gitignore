@@ -19,3 +19,4 @@ build/
 
 # Optionally ignore backups
 *.tmp
+assets/sons/
