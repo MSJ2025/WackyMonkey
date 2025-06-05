@@ -6,7 +6,7 @@ extends CanvasLayer
 
 @onready var pseudo_lineedit = $VBoxContainer/PseudoLineEdit
 @onready var label_pseudo = $LabelPseudo  # Adapter le chemin si besoin (en général à la racine du MainMenu)
-@onready var admin_message_label = $encart/AdminMessage
+@onready var admin_message_label = $encartAdmin/AdminMessage
 
 func _ready():
     var saved_pseudo = ScoreManager.load_pseudo()
