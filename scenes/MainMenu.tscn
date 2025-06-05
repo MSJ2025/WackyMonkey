@@ -241,6 +241,19 @@ offset_right = 1423.0
 offset_bottom = 1422.0
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("7_k04n6")
+[node name="AdminMessage" type="RichTextLabel" parent="encart"]
+anchors_preset = 8
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+bbcode_enabled = true
+visible = false
+
 
 [node name="LabelPseudo" type="Label" parent="."]
 anchors_preset = 8

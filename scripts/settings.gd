@@ -11,11 +11,13 @@ extends CanvasLayer
 @onready var btn_ok_pseudo    = $VBoxContainer/HBoxEditPseudo/BtnOkPseudo
 @onready var btn_reset     = $VBoxContainer/BtnReset
 @onready var btn_back      = $VBoxContainer/BtnBack
+@onready var btn_admin     = $VBoxContainer/BtnAdmin
 @onready var label_music_percent = $VBoxContainer/HBoxMusic/LabelMusicPercent
 @onready var label_sfx_percent   = $VBoxContainer/HBoxSFX/LabelSFXPercent
 
 var available_languages = ["Français", "English", "Español"] # Modifie selon tes besoins
 var settings_file = "user://settings.cfg"
+var admin_scene_path : String = "res://scenes/AdminPage.tscn"
 
 func _ready():
     load_settings()
@@ -26,6 +28,8 @@ func _ready():
     hbox_edit_pseudo.visible = false
     btn_modify_pseudo.pressed.connect(_on_modify_pseudo)
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
+    var pseudo = ScoreManager.load_pseudo()
+    btn_admin.visible = pseudo.to_lower() == "admin"
 
 func load_settings():
     var config = ConfigFile.new()
@@ -71,6 +75,7 @@ func connect_signals():
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
     btn_reset.pressed.connect(_on_reset_scores)
     btn_back.pressed.connect(_on_back_pressed)
+    btn_admin.pressed.connect(_on_admin_pressed)
 
 func _on_music_volume_changed(value):
     AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(value))
@@ -134,6 +139,10 @@ func _on_reset_scores():
 
 func _on_back_pressed():
     get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func _on_admin_pressed():
+    if admin_scene_path != "":
+        get_tree().change_scene_to_file(admin_scene_path)
 
 func show_message(msg):
     print(msg)

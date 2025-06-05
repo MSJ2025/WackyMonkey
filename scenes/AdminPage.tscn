@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/admin_page.gd" id="1"]
+
+[node name="AdminPage" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="MessageEdit" type="TextEdit" parent="VBoxContainer"]
+size_flags_vertical = 4
+
+[node name="BtnSave" type="Button" parent="VBoxContainer"]
+text = "Enregistrer"
+
+[node name="BtnBack" type="Button" parent="VBoxContainer"]
+text = "Retour"
