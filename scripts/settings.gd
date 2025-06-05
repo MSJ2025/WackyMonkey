@@ -29,8 +29,7 @@ func _ready():
     btn_modify_pseudo.pressed.connect(_on_modify_pseudo)
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
     var pseudo = ScoreManager.load_pseudo()
-    btn_admin.visible = pseudo.to_lower() == "admin"
-
+    btn_admin.visible = pseudo.to_lower() == "jordi77178"
 func load_settings():
     var config = ConfigFile.new()
     if config.load(settings_file) == OK:

@@ -1,6 +1,6 @@
-res://scenes/magnet.tscn
+res://scenes/settings.tscn
 res://scripts/ScriptGame.gd
-res://scenes/cacahuette.tscn
+res://scripts/settings.gd
 res://scenes/platform.tscn
 res://scenes/platform2.tscn
 res://scenes/platform3.tscn
@@ -8,5 +8,8 @@ res://scenes/banana.tscn
 res://scenes/Splash.tscn
 res://scenes/Game.tscn
 res://scenes/Player.tscn
-res://scripts/platform3.gd
-res://scenes/platform_2.gd
+res://scenes/magnet.tscn
+res://scenes/cacahuette.tscn
+res://scenes/AdminPage.tscn
+res://scripts/managers/FirestoreManager.gd
+res://scenes/MainMenu.tscn

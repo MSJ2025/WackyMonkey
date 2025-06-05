@@ -55,6 +55,5 @@ frame_progress = 0.873546
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-2.22865, 66.5066)
 rotation = -0.0872664
-scale = Vector2(1, 1)
 skew = 0.118682
 shape = SubResource("RectangleShape2D_olwxd")

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/settings.gd" id="1_oec6q"]
 [ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="2_kmden"]
 [ext_resource type="Texture2D" uid="uid://cgsrr1cqtlny" path="res://assets/panneau.png" id="3_rokat"]
-[ext_resource type="FontFile" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="4_f22ch"]
+[ext_resource type="FontFile" uid="uid://dbqw3kdwxgfi8" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="4_f22ch"]
 [ext_resource type="Texture2D" uid="uid://bcjnjjejfevy1" path="res://assets/logo.png" id="4_i2ljb"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ftqgk"]

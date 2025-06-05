@@ -1,10 +1,9 @@
-[gd_scene load_steps=29 format=3 uid="uid://cktmgt1i5lvoa"]
+[gd_scene load_steps=30 format=3 uid="uid://cktmgt1i5lvoa"]
 
 [ext_resource type="Script" path="res://scripts/ScriptGame.gd" id="1_ywbhx"]
 [ext_resource type="PackedScene" uid="uid://bq0m6dlp0wgvn" path="res://scenes/ground.tscn" id="2_giilh"]
 [ext_resource type="PackedScene" uid="uid://bjh64iu76wlub" path="res://scenes/platform.tscn" id="3_35ofn"]
 [ext_resource type="PackedScene" uid="uid://3ko2si50vxr2" path="res://scenes/platform2.tscn" id="4_7w8n5"]
-[ext_resource type="PackedScene" uid="uid://bqcilefnmyv6q" path="res://scenes/platform3.tscn" id="17_plat3"]
 [ext_resource type="PackedScene" uid="uid://oq565n8i7mee" path="res://scenes/banana.tscn" id="5_rit4b"]
 [ext_resource type="PackedScene" uid="uid://blie71tmb10yj" path="res://scenes/cacahuette.tscn" id="6_uvepm"]
 [ext_resource type="PackedScene" uid="uid://b4ph08e5k0e8r" path="res://scenes/ScoreLine.tscn" id="7_m3jgn"]
@@ -21,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://c3k3mjxarknx5" path="res://assets/encart.png" id="15_6ml7f"]
 [ext_resource type="Script" path="res://scripts/game_over_layer.gd" id="15_i1qyh"]
 [ext_resource type="FontFile" uid="uid://dbqw3kdwxgfi8" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="16_itndj"]
+[ext_resource type="PackedScene" uid="uid://bqcilefnmyv6q" path="res://scenes/platform3.tscn" id="17_plat3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_edy2h"]
 line_spacing = 12.0
