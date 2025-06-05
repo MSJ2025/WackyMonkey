@@ -172,8 +172,12 @@ func fetch_admin_message(callback):
     get_tree().root.add_child(http)
 
     http.request_completed.connect(func(result, code, headers, body):
+        var body_text = body.get_string_from_utf8()
+        print("fetch_admin_message HTTP code:", code)
+        print("fetch_admin_message body:", body_text)
         if result != HTTPRequest.RESULT_SUCCESS or code != 200:
             push_error("Erreur HTTP: %d" % code)
+            push_error(body_text)
             if callback:
                 callback.call(null)
             http.queue_free()
