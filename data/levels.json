@@ -26,6 +26,17 @@
       "move_range": 200,
       "move_time": 4.0
     },
+    "platform3.tscn": {
+      "chance": 0.0,
+      "static": 1.0,
+      "horizontal": 0.0,
+      "vertical": 0.0,
+      "breakable": 1.0,
+      "persistent": 1.0,
+      "bounce_mult": 1.0,
+      "move_range": 200,
+      "move_time": 4.0
+    },
     "banana.tscn": {
       "spawn_interval": 1.0,
       "max_simultaneous": 2
@@ -63,6 +74,17 @@
     },
     "platform2.tscn": {
       "chance": 0.5,
+      "static": 1.0,
+      "horizontal": 0.0,
+      "vertical": 0.0,
+      "breakable": 1.0,
+      "persistent": 0.0,
+      "bounce_mult": 1.0,
+      "move_range": 200,
+      "move_time": 4.0
+    },
+    "platform3.tscn": {
+      "chance": 0.0,
       "static": 1.0,
       "horizontal": 0.0,
       "vertical": 0.0,
@@ -118,6 +140,17 @@
       "move_range": 200,
       "move_time": 4.0
     },
+    "platform3.tscn": {
+      "chance": 0.0,
+      "static": 0.9,
+      "horizontal": 0.0,
+      "vertical": 0.1,
+      "breakable": 1.0,
+      "persistent": 0.0,
+      "bounce_mult": 1.0,
+      "move_range": 200,
+      "move_time": 4.0
+    },
     "banana.tscn": {
       "spawn_interval": 1.0,
       "max_simultaneous": 2
@@ -155,6 +188,17 @@
     },
     "platform2.tscn": {
       "chance": 0.3,
+      "static": 0.5,
+      "horizontal": 0.5,
+      "vertical": 0.0,
+      "breakable": 1.0,
+      "persistent": 0.0,
+      "bounce_mult": 1.0,
+      "move_range": 400,
+      "move_time": 8.0
+    },
+    "platform3.tscn": {
+      "chance": 0.0,
       "static": 0.5,
       "horizontal": 0.5,
       "vertical": 0.0,
@@ -210,6 +254,17 @@
       "move_range": 200,
       "move_time": 4.0
     },
+    "platform3.tscn": {
+      "chance": 0.0,
+      "static": 1.0,
+      "horizontal": 0.0,
+      "vertical": 0.0,
+      "breakable": 1.0,
+      "persistent": 1.0,
+      "bounce_mult": 1.0,
+      "move_range": 200,
+      "move_time": 4.0
+    },
     "banana.tscn": {
       "spawn_interval": 0.44,
       "max_simultaneous": 9
@@ -247,6 +302,17 @@
     },
     "platform2.tscn": {
       "chance": 0.5,
+      "static": 0.0,
+      "horizontal": 0.0,
+      "vertical": 0.5,
+      "breakable": 1.0,
+      "persistent": 1.0,
+      "bounce_mult": 0.65,
+      "move_range": 386,
+      "move_time": 8.2
+    },
+    "platform3.tscn": {
+      "chance": 0.0,
       "static": 0.0,
       "horizontal": 0.0,
       "vertical": 0.5,
