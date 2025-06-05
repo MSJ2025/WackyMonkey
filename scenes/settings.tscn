@@ -169,6 +169,11 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Réinitialiser les scores en local "
 
+[node name="BtnAdmin" type="Button" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "ADMIN"
+
 [node name="BtnBack" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "BACK"

@@ -21,6 +21,7 @@ LevelManager="*res://scripts/LevelManager.gd"
 ScoreManager="*res://scripts/managers/ScoreManager.gd"
 FirestoreManager="*res://scripts/managers/FirestoreManager.gd"
 SettingsManager="*res://scripts/managers/SettingsManager.gd"
+AdminMessageManager="*res://scripts/managers/AdminMessageManager.gd"
 
 [display]
 
