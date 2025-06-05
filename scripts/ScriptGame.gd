@@ -4,6 +4,7 @@ extends Node2D
 @export var ground_scene       : PackedScene
 @export var platform_scene     : PackedScene
 @export var platform2_scene    : PackedScene
+@export var platform3_scene    : PackedScene
 @export var banana_scene       : PackedScene
 @export var peanut_scene       : PackedScene
 @export var initial_platforms  : int    = 10
@@ -297,17 +298,25 @@ func _level_up() -> void:
 func spawn_platform(y_pos: float) -> Node2D:
     var p1_cfg = level_cfg.get("platform.tscn", {})
     var p2_cfg = level_cfg.get("platform2.tscn", {})
+    var p3_cfg = level_cfg.get("platform3.tscn", {})
     var w1 = p1_cfg.get("chance", 1.0)
     var w2 = p2_cfg.get("chance", 0.0)
-    var total = w1 + w2
+    var w3 = p3_cfg.get("chance", 0.0)
+    var total = w1 + w2 + w3
     var draw = randf() * total
-    var use_mobile = false
-    if draw >= w1:
-        use_mobile = true
-    var scene_ref: PackedScene = platform2_scene if use_mobile else platform_scene
+    var cfg: Dictionary
+    var scene_ref: PackedScene
+    if draw < w1:
+        cfg = p1_cfg
+        scene_ref = platform_scene
+    elif draw < w1 + w2:
+        cfg = p2_cfg
+        scene_ref = platform2_scene
+    else:
+        cfg = p3_cfg
+        scene_ref = platform3_scene
     var plat = scene_ref.instantiate() as Node2D
     add_child(plat)
-    var cfg: Dictionary = p2_cfg if use_mobile else p1_cfg
     var vw = get_viewport_rect().size.x
     plat.position = Vector2(randi_range(100, int(vw - 100)), y_pos)
     if plat.has_node("CollisionShape2D"):
