@@ -21,8 +21,20 @@ func check_pseudo_unique(pseudo: String, device_id: String, callback):
     }
     var http = HTTPRequest.new()
     get_tree().root.add_child(http)
+    http.request_failed.connect(func(result):
+        push_error("Requête échouée: %s" % result)
+        if callback:
+            callback.call(false)
+        http.queue_free()
+    )
     http.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
     http.request_completed.connect(func(result, code, headers, body):
+        if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+            push_error("Erreur HTTP: %s" % code)
+            if callback:
+                callback.call(false)
+            http.queue_free()
+            return
         var data = JSON.parse_string(body.get_string_from_utf8())
         var unique = true
         for row in data:
@@ -45,8 +57,20 @@ func submit_score_if_best(pseudo: String, score: int, device_id: String, best_he
         var url = BASE_URL + "/" + device_id
         var http = HTTPRequest.new()
         get_tree().root.add_child(http)
+        http.request_failed.connect(func(err):
+            push_error("Requête échouée: %s" % err)
+            if callback:
+                callback.call(false)
+            http.queue_free()
+        )
         http.request(url, [], HTTPClient.METHOD_GET)
         http.request_completed.connect(func(result, code, headers, body):
+            if result != HTTPRequest.RESULT_SUCCESS:
+                push_error("Erreur HTTP: %s" % code)
+                if callback:
+                    callback.call(false)
+                http.queue_free()
+                return
             var can_submit = true
             if code == 200:
                 var data = JSON.parse_string(body.get_string_from_utf8())
@@ -83,11 +107,23 @@ func _patch_score(pseudo: String, score: int, device_id: String, best_height: in
     }
     var http = HTTPRequest.new()
     get_tree().root.add_child(http)
+    http.request_failed.connect(func(err):
+        push_error("Requête échouée: %s" % err)
+        if callback != null:
+            callback.call(false)
+        http.queue_free()
+    )
     http.request(url, headers, HTTPClient.METHOD_PATCH, JSON.stringify(body))
     http.request_completed.connect(func(result, response_code, headers, body):
+        if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+            push_error("Erreur HTTP: %s" % response_code)
+            if callback != null:
+                callback.call(false)
+            http.queue_free()
+            return
         print("Submit Score:", response_code, body.get_string_from_utf8())
         if callback != null:
-            callback.call(response_code == 200)
+            callback.call(true)
         http.queue_free()
     )
 
@@ -107,8 +143,20 @@ func fetch_top_scores(callback):
     }
     var http = HTTPRequest.new()
     get_tree().root.add_child(http)
+    http.request_failed.connect(func(err):
+        push_error("Requête échouée: %s" % err)
+        if callback:
+            callback.call(false)
+        http.queue_free()
+    )
     http.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
     http.request_completed.connect(func(result, response_code, headers, body):
+        if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+            push_error("Erreur HTTP: %s" % response_code)
+            if callback:
+                callback.call(false)
+            http.queue_free()
+            return
         var data = JSON.parse_string(body.get_string_from_utf8())
         var scores = []
         for row in data:
