@@ -480,4 +480,6 @@ func afficher_leaderboard(scores: Array):
         line.position = Vector2(0, score_y)
         add_child(line) # <-- D'abord on l'ajoute à la scène !
         line.set_score(entry.pseudo, entry.best_height)
+        if entry.pseudo == ScoreManager.load_pseudo():
+            line.highlight()
         print("Ajout ligne pour %s à %d m (y=%d)" % [entry.pseudo, entry.best_height, score_y])
