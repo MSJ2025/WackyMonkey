@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://bqcilefnmyv6q"]
 
-[ext_resource type="Script" path="res://scenes/platform_2.gd" id="1_8bavn"]
+[ext_resource type="Script" path="res://scripts/platform3.gd" id="1_cvrdg"]
 [ext_resource type="Texture2D" uid="uid://dqjypjms1hj2l" path="res://assets/plateform2.png" id="2_qev0w"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ddnmn"]
@@ -57,9 +57,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hf0nv"]
 size = Vector2(110.651, 2096.61)
 
-[node name="platform2" type="StaticBody2D"]
+[node name="platform3" type="StaticBody2D"]
 scale = Vector2(0.1, 0.1)
-script = ExtResource("1_8bavn")
+script = ExtResource("1_cvrdg")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false

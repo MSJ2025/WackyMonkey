@@ -8,3 +8,5 @@ res://scenes/banana.tscn
 res://scenes/Splash.tscn
 res://scenes/Game.tscn
 res://scenes/Player.tscn
+res://scripts/platform3.gd
+res://scenes/platform_2.gd
