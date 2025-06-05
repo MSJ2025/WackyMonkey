@@ -70,6 +70,12 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 
+    var vw = get_viewport_rect().size.x
+    if global_position.x > vw:
+        global_position.x -= vw
+    elif global_position.x < 0:
+        global_position.x += vw
+
     if not anim.is_playing() and not did_rebound:
         anim.play("fly")
         update_collision_shape()
