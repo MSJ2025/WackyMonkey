@@ -213,3 +213,22 @@ func save_admin_message(message: String, callback = null):
     )
 
     http.request(ADMIN_MESSAGE_URL, headers, HTTPClient.METHOD_PATCH, JSON.stringify(body))
+
+# Supprime le message administrateur de Firestore
+func delete_admin_message(callback = null):
+    var http = HTTPRequest.new()
+    get_tree().root.add_child(http)
+
+    http.request_completed.connect(func(result, code, headers, body):
+        if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+            push_error("Erreur HTTP: %d" % code)
+            if callback:
+                callback.call(false)
+            http.queue_free()
+            return
+        if callback:
+            callback.call(true)
+        http.queue_free()
+    )
+
+    http.request(ADMIN_MESSAGE_URL, [], HTTPClient.METHOD_DELETE)

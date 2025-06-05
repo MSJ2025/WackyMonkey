@@ -7,6 +7,7 @@ extends CanvasLayer
 @onready var pseudo_lineedit = $VBoxContainer/PseudoLineEdit
 @onready var label_pseudo = $LabelPseudo  # Adapter le chemin si besoin (en général à la racine du MainMenu)
 @onready var admin_message_label = $encartAdmin/AdminMessage
+@onready var admin_message_box = $encartAdmin
 
 func _ready():
     var saved_pseudo = ScoreManager.load_pseudo()
@@ -30,12 +31,14 @@ func _ready():
     $VBoxContainer/SettingsButton.pressed.connect(_on_Settings_pressed)
     $VBoxContainer/QuitButton.pressed.connect(_on_Quit_pressed)
     var admin_msg = AdminMessageManager.load_message()
+    admin_message_box.visible = admin_msg != ""
     admin_message_label.bbcode_enabled = true
     admin_message_label.text = admin_msg
     admin_message_label.visible = admin_msg != ""
     AdminMessageManager.fetch_message(func(msg):
         admin_message_label.text = msg
         admin_message_label.visible = msg != ""
+        admin_message_box.visible = msg != ""
     )
 
 

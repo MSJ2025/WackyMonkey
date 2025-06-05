@@ -36,3 +36,12 @@ func save_message(new_message: String, callback = null) -> void:
         if callback:
             callback.call(success)
     )
+
+func clear_message(callback = null):
+    message = ""
+    FirestoreManager.delete_admin_message(func(success):
+        if success:
+            _save_local()
+        if callback:
+            callback.call(success)
+    )
