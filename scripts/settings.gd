@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const ADMIN_PASSWORD = "Bspp77178"
+
 @onready var slider_music   = $VBoxContainer/HBoxMusic/HSlider
 @onready var slider_sfx     = $VBoxContainer/HBoxSFX/HSlider
 @onready var option_lang    = $VBoxContainer/HBoxLangue/OptionButton
@@ -18,6 +20,8 @@ extends CanvasLayer
 var available_languages = ["Français", "English", "Español"] # Modifie selon tes besoins
 var settings_file = "user://settings.cfg"
 var admin_scene_path : String = "res://scenes/AdminPage.tscn"
+var password_dialog : AcceptDialog
+var password_field  : LineEdit
 
 func _ready():
     load_settings()
@@ -30,6 +34,14 @@ func _ready():
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
     var pseudo = ScoreManager.load_pseudo()
     btn_admin.visible = pseudo.to_lower() == "jordi77178"
+    # Cr\u00e9e la bo\u00eete de dialogue pour le mot de passe admin
+    password_dialog = AcceptDialog.new()
+    password_dialog.title = "Mot de passe"
+    password_field = LineEdit.new()
+    password_field.secret = true
+    password_dialog.add_child(password_field)
+    add_child(password_dialog)
+    password_dialog.confirmed.connect(_on_password_confirmed)
 func load_settings():
     var config = ConfigFile.new()
     if config.load(settings_file) == OK:
@@ -140,8 +152,20 @@ func _on_back_pressed():
     get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_admin_pressed():
-    if admin_scene_path != "":
-        get_tree().change_scene_to_file(admin_scene_path)
+    password_dialog.dialog_text = "Entrez le mot de passe"
+    password_field.text = ""
+    password_dialog.popup_centered()
+    password_field.grab_focus()
+
+func _on_password_confirmed():
+    if password_field.text == ADMIN_PASSWORD:
+        password_dialog.hide()
+        if admin_scene_path != "":
+            get_tree().change_scene_to_file(admin_scene_path)
+    else:
+        password_dialog.dialog_text = "Mot de passe incorrect"
+        password_field.text = ""
+        password_dialog.popup_centered()
 
 func show_message(msg):
     print(msg)
