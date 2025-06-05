@@ -261,15 +261,7 @@ func _spawn_initial_platforms():
 func setup_borders():
     var size: Vector2 = get_viewport_rect().size
     var t: float = 10.0
-    for x in [0, size.x]:
-        var wall = StaticBody2D.new()
-        var r    = RectangleShape2D.new()
-        r.extents = Vector2(t, size.y * 0.5)
-        var col  = CollisionShape2D.new()
-        col.shape = r
-        wall.position = Vector2(x, size.y * 0.5)
-        wall.add_child(col)
-        add_child(wall)
+    # Bordures décoratives seulement : pas de murs physiques
     var ui = CanvasLayer.new()
     add_child(ui)
     for x in [0, size.x]:
