@@ -34,6 +34,7 @@ func _ready():
     admin_message_label.text = admin_msg
     admin_message_label.visible = admin_msg != ""
     AdminMessageManager.fetch_message(func(msg):
+        print("Message re\u00e7u :", msg)
         admin_message_label.text = msg
         admin_message_label.visible = msg != ""
     )

@@ -15,6 +15,7 @@ func _save_local():
 
 func load_message() -> String:
     message = _load_local()
+    print("Message charg\u00e9 :", message)
     return message
 
 func fetch_message(callback):
