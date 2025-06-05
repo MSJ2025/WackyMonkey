@@ -2,6 +2,7 @@ extends Node
 
 const FIREBASE_PROJECT_ID = "wackymonkey-924a8"
 const BASE_URL = "https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents/leaderboard" % FIREBASE_PROJECT_ID
+const ADMIN_MESSAGE_URL = "https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents/admin_message/message" % FIREBASE_PROJECT_ID
 
 # Vérifie si le pseudo est unique (pas utilisé par un autre device)
 func check_pseudo_unique(pseudo: String, device_id: String, callback):
@@ -164,3 +165,51 @@ func fetch_top_scores(callback):
     )
 
     http.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
+
+# Récupère le message administrateur depuis Firestore
+func fetch_admin_message(callback):
+    var http = HTTPRequest.new()
+    get_tree().root.add_child(http)
+
+    http.request_completed.connect(func(result, code, headers, body):
+        if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+            push_error("Erreur HTTP: %d" % code)
+            if callback:
+                callback.call(null)
+            http.queue_free()
+            return
+        var data = JSON.parse_string(body.get_string_from_utf8())
+        var msg = ""
+        if data.has("fields") and data.fields.has("text"):
+            msg = str(data.fields.text.stringValue)
+        if callback:
+            callback.call(msg)
+        http.queue_free()
+    )
+
+    http.request(ADMIN_MESSAGE_URL, [], HTTPClient.METHOD_GET)
+
+# Sauvegarde le message administrateur dans Firestore
+func save_admin_message(message: String, callback = null):
+    var http = HTTPRequest.new()
+    get_tree().root.add_child(http)
+    var headers = ["Content-Type: application/json"]
+    var body = {
+        "fields": {
+            "text": {"stringValue": message}
+        }
+    }
+
+    http.request_completed.connect(func(result, code, headers, body_data):
+        if result != HTTPRequest.RESULT_SUCCESS or (code != 200 and code != 201):
+            push_error("Erreur HTTP: %d" % code)
+            if callback:
+                callback.call(false)
+            http.queue_free()
+            return
+        if callback:
+            callback.call(true)
+        http.queue_free()
+    )
+
+    http.request(ADMIN_MESSAGE_URL, headers, HTTPClient.METHOD_PATCH, JSON.stringify(body))
