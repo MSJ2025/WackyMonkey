@@ -1,0 +1,189 @@
+[gd_scene load_steps=14 format=3 uid="uid://bagt5eoejkrl0"]
+
+[ext_resource type="Script" path="res://scripts/settings.gd" id="1_oec6q"]
+[ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="2_kmden"]
+[ext_resource type="Texture2D" uid="uid://cgsrr1cqtlny" path="res://assets/panneau.png" id="3_rokat"]
+[ext_resource type="FontFile" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="4_f22ch"]
+[ext_resource type="Texture2D" uid="uid://bcjnjjejfevy1" path="res://assets/logo.png" id="4_i2ljb"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ftqgk"]
+font_size = 20
+font_color = Color(0.00566115, 0.00566115, 0.00566115, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_t0q4x"]
+font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_fbjqi"]
+font_size = 20
+font_color = Color(0.0497766, 0.0497766, 0.0497766, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_3u327"]
+font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_rn26i"]
+font_color = Color(0.000333904, 0.000333904, 0.000333904, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_srhet"]
+font_size = 28
+font_color = Color(0.000693898, 0.000693898, 0.000693898, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_uf0r7"]
+font = ExtResource("4_f22ch")
+font_size = 30
+font_color = Color(0.980392, 0.615686, 0.00784314, 1)
+shadow_color = Color(0.329412, 0.223529, 0.133333, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_chchb"]
+font = ExtResource("4_f22ch")
+font_size = 80
+font_color = Color(0.988235, 0.631373, 0.00784314, 1)
+shadow_size = 9
+shadow_color = Color(1, 1, 1, 0.490196)
+
+[node name="Settings" type="CanvasLayer"]
+script = ExtResource("1_oec6q")
+
+[node name="ColorRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_kmden")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -556.5
+offset_right = 557.5
+offset_bottom = 2525.0
+grow_horizontal = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="Panneau" type="Sprite2D" parent="VBoxContainer"]
+position = Vector2(576, 598)
+scale = Vector2(0.487076, 0.375347)
+texture = ExtResource("3_rokat")
+
+[node name="HBoxMusic" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxMusic"]
+layout_mode = 2
+text = "🎵 Musique"
+label_settings = SubResource("LabelSettings_ftqgk")
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxMusic"]
+modulate = Color(0.0253638, 0.0253638, 0.0253638, 1)
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+tick_count = 1
+
+[node name="LabelMusicPercent" type="Label" parent="VBoxContainer/HBoxMusic"]
+layout_mode = 2
+text = "🔊 80%"
+label_settings = SubResource("LabelSettings_t0q4x")
+
+[node name="HBoxSFX" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxSFX"]
+layout_mode = 2
+text = "🔊     Effets    "
+label_settings = SubResource("LabelSettings_fbjqi")
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxSFX"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="LabelSFXPercent" type="Label" parent="VBoxContainer/HBoxSFX"]
+layout_mode = 2
+text = "  🔊 80%"
+label_settings = SubResource("LabelSettings_3u327")
+
+[node name="HBoxLangue" type="HBoxContainer" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxLangue"]
+layout_mode = 2
+text = "🌐 Langue"
+label_settings = SubResource("LabelSettings_rn26i")
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxLangue"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HBoxVibro" type="HBoxContainer" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxVibro"]
+layout_mode = 2
+text = "📳 Vibrations"
+label_settings = SubResource("LabelSettings_srhet")
+
+[node name="CheckButton" type="CheckButton" parent="VBoxContainer/HBoxVibro"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="HBoxPseudo" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelPseudo" type="Label" parent="VBoxContainer/HBoxPseudo"]
+layout_mode = 2
+text = "👤 Nom du joueur"
+label_settings = SubResource("LabelSettings_uf0r7")
+
+[node name="BtnModifyPseudo" type="Button" parent="VBoxContainer/HBoxPseudo"]
+layout_mode = 2
+text = "changer de nom de joueur"
+
+[node name="HBoxEditPseudo" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEditPseudo" type="LineEdit" parent="VBoxContainer/HBoxEditPseudo"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "choisir un nouveau Pseudo"
+
+[node name="BtnOkPseudo" type="Button" parent="VBoxContainer/HBoxEditPseudo"]
+layout_mode = 2
+text = "       OK      "
+
+[node name="BtnReset" type="Button" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Réinitialiser les scores en local "
+
+[node name="BtnBack" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "BACK"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 49.0
+offset_top = 599.0
+offset_right = 1163.0
+offset_bottom = 680.0
+text = "Paramètres"
+label_settings = SubResource("LabelSettings_chchb")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="Logo" type="Sprite2D" parent="."]
+position = Vector2(595, 240)
+scale = Vector2(0.365333, 0.365333)
+texture = ExtResource("4_i2ljb")

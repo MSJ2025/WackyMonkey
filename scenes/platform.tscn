@@ -1,0 +1,88 @@
+[gd_scene load_steps=11 format=3 uid="uid://bjh64iu76wlub"]
+
+[ext_resource type="Texture2D" uid="uid://ctfb5icnq865c" path="res://assets/planche.png" id="2_rve0s"]
+[ext_resource type="Script" path="res://scripts/platform.gd" id="3_qjwum"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ddnmn"]
+load_path = "res://.godot/imported/plateform.png-a1dc1efb7c1d130ce700628f4d8a0753.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rre6o"]
+atlas = ExtResource("2_rve0s")
+region = Rect2(0, 180, 152, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0hqo8"]
+atlas = ExtResource("2_rve0s")
+region = Rect2(160, 180, 152, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k4f0t"]
+atlas = ExtResource("2_rve0s")
+region = Rect2(320, 180, 152, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8xpk3"]
+atlas = ExtResource("2_rve0s")
+region = Rect2(480, 180, 152, 173)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ed7kv"]
+atlas = ExtResource("2_rve0s")
+region = Rect2(0, 180, 152, 173)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j1c5p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rre6o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0hqo8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k4f0t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8xpk3")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"break",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ed7kv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hf0nv"]
+size = Vector2(110.651, 2096.61)
+
+[node name="platform" type="StaticBody2D"]
+scale = Vector2(0.1, 0.1)
+script = ExtResource("3_qjwum")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(424, 0)
+scale = Vector2(1.82812, 1)
+texture = SubResource("CompressedTexture2D_ddnmn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(1, 1, 0.396078, 1)
+texture_filter = 1
+position = Vector2(-130, -280)
+scale = Vector2(17.4172, 10.9528)
+sprite_frames = SubResource("SpriteFrames_j1c5p")
+animation = &"break"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-197.783, -320.298)
+rotation = 1.6057
+scale = Vector2(0.999999, 0.999999)
+skew = -0.0593412
+shape = SubResource("RectangleShape2D_hf0nv")
+one_way_collision = true
+one_way_collision_margin = 0.6

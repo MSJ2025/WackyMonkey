@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://plb0m7y8kbj5"]
+
+[ext_resource type="Texture2D" uid="uid://cgsrr1cqtlny" path="res://assets/panneau.png" id="1_et3kn"]
+
+[node name="panneau" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(471, 0)
+scale = Vector2(1.73594, 1)
+texture = ExtResource("1_et3kn")

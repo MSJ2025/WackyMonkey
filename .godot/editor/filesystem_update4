@@ -1,0 +1,10 @@
+res://scenes/magnet.tscn
+res://scripts/ScriptGame.gd
+res://scenes/cacahuette.tscn
+res://scenes/platform.tscn
+res://scenes/platform2.tscn
+res://scenes/platform3.tscn
+res://scenes/banana.tscn
+res://scenes/Splash.tscn
+res://scenes/Game.tscn
+res://scenes/Player.tscn

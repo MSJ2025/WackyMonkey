@@ -1,0 +1,210 @@
+[gd_scene load_steps=13 format=3 uid="uid://wq3aynu7jb6k"]
+
+[ext_resource type="Script" path="res://scripts/Leaderboard.gd" id="1_l5tba"]
+[ext_resource type="Texture2D" uid="uid://1gs11d82713k" path="res://assets/fond1.png" id="2_u3b3i"]
+[ext_resource type="FontFile" path="res://assets/fonts/LuckiestGuy-Regular.ttf" id="3_h8aj5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hnklf"]
+bg_color = Color(0.92549, 0.92549, 0.92549, 1)
+corner_radius_top_left = 48
+corner_radius_top_right = 48
+corner_radius_bottom_right = 48
+corner_radius_bottom_left = 48
+shadow_color = Color(0, 0, 0, 0.0705882)
+shadow_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_kmay6"]
+font = ExtResource("3_h8aj5")
+font_size = 70
+font_color = Color(0.960784, 0.737255, 0.133333, 1)
+outline_size = 23
+outline_color = Color(0.76962, 0.58436, 0.052902, 1)
+shadow_size = 0
+shadow_color = Color(0, 0, 0, 0.721569)
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_a5tr8"]
+font = ExtResource("3_h8aj5")
+font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_5eu0q"]
+font = ExtResource("3_h8aj5")
+font_size = 48
+font_color = Color(0.0584206, 0.0584206, 0.0584206, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bhlft"]
+bg_color = Color(0.961689, 0.738848, 0.127581, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_joht1"]
+font = ExtResource("3_h8aj5")
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_3b605"]
+font = ExtResource("3_h8aj5")
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_47yf3"]
+font = ExtResource("3_h8aj5")
+font_size = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sxvj5"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.40504, 0.337963, 0.0383966, 1)
+shadow_color = Color(0.02, 0.02, 0.02, 0.835294)
+shadow_size = 8
+
+[node name="Leaderboard" type="CanvasLayer"]
+script = ExtResource("1_l5tba")
+
+[node name="ColorRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_u3b3i")
+
+[node name="Panel" type="Panel" parent="."]
+modulate = Color(1, 1, 1, 0.360784)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 428.0
+offset_right = -48.0
+offset_bottom = -84.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hnklf")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -471.5
+offset_top = -1042.0
+offset_right = 500.5
+offset_bottom = 1314.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="UserBestCard" type="Panel" parent="MainContainer"]
+layout_mode = 2
+
+[node name="BestLabel" type="Label" parent="MainContainer/UserBestCard"]
+layout_mode = 0
+offset_left = -107.0
+offset_top = -143.0
+offset_right = 1046.0
+offset_bottom = -43.0
+text = "🏆 Meilleur score : XXX pts"
+label_settings = SubResource("LabelSettings_kmay6")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BestHeightLabel" type="Label" parent="MainContainer/UserBestCard"]
+visible = false
+layout_mode = 0
+offset_left = -98.0
+offset_top = -43.0
+offset_right = 1047.0
+offset_bottom = 18.0
+text = "Meilleure hauteur atteinte : XXX m"
+label_settings = SubResource("LabelSettings_a5tr8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+text = "🏆 Classement"
+label_settings = SubResource("LabelSettings_5eu0q")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="ScrollCont" type="ScrollContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(1000, 1700)
+layout_mode = 2
+
+[node name="ListContainer" type="VBoxContainer" parent="MainContainer/ScrollCont"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Panel" type="Panel" parent="MainContainer/ScrollCont/ListContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bhlft")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/ScrollCont/ListContainer/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Control" type="Control" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelPosition" type="Label" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🏆"
+label_settings = SubResource("LabelSettings_joht1")
+vertical_alignment = 1
+uppercase = true
+
+[node name="LabelPseudo" type="Label" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Joueur"
+label_settings = SubResource("LabelSettings_joht1")
+vertical_alignment = 1
+uppercase = true
+
+[node name="LabelScore" type="Label" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Points"
+label_settings = SubResource("LabelSettings_3b605")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="LabelHauteur" type="Label" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "hauteur max"
+label_settings = SubResource("LabelSettings_47yf3")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Control2" type="Control" parent="MainContainer/ScrollCont/ListContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ReturnButton" type="Button" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 46
+theme_override_styles/normal = SubResource("StyleBoxFlat_sxvj5")
+text = "Retour"
+
+[connection signal="pressed" from="MainContainer/ReturnButton" to="." method="_on_return_button_pressed"]
