@@ -234,7 +234,6 @@ position = Vector2(728, 327)
 scale = Vector2(0.66416, 0.66416)
 texture = ExtResource("6_qt48a")
 
-
 [node name="encart2" type="TextureRect" parent="."]
 offset_left = 301.0
 offset_top = 398.0

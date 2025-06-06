@@ -5,23 +5,25 @@ extends CanvasLayer
 @export var settings_scene_path    : String = "res://scenes/settings.tscn"  # optionnel
 
 @onready var pseudo_lineedit = $VBoxContainer/PseudoLineEdit
-@onready var label_pseudo = $LabelPseudo  # Adapter le chemin si besoin (en général à la racine du MainMenu)
+@onready var label_pseudo = $LabelPseudo
+
+
 
 func _ready():
+    print("DEBUG: _ready() called")
+    
     var saved_pseudo = ScoreManager.load_pseudo()
     print("DEBUG: Pseudo chargé au menu:", saved_pseudo)
+    
     if saved_pseudo == "" or saved_pseudo == null:
-        # Aucun pseudo enregistré → montrer le champ, cacher le label
         pseudo_lineedit.visible = true
         label_pseudo.visible = false
-        pseudo_lineedit.text = "" # champ vide
+        pseudo_lineedit.text = ""
     else:
-        # Pseudo déjà enregistré → montrer le label, cacher le champ
         pseudo_lineedit.visible = false
         label_pseudo.visible = true
         label_pseudo.text = " %s" % saved_pseudo
-        pseudo_lineedit.text = saved_pseudo # <-- AJOUTE cette ligne
-        label_pseudo.text = " %s" % saved_pseudo
+        pseudo_lineedit.text = saved_pseudo
 
     pseudo_lineedit.text_changed.connect(_on_PseudoLineEdit_text_changed)
     $VBoxContainer/PlayButton.pressed.connect(_on_Play_pressed)
@@ -29,7 +31,8 @@ func _ready():
     $VBoxContainer/SettingsButton.pressed.connect(_on_Settings_pressed)
     $VBoxContainer/QuitButton.pressed.connect(_on_Quit_pressed)
 
-
+    # Lancement de la vérification de mise à jour
+    VersionManager.check_for_update()
 
 
 func _on_Play_pressed():
@@ -53,9 +56,7 @@ func _on_Quit_pressed():
     get_tree().quit()
 
 func show_message(msg):
-    # Tu peux remplacer par un Label dans le menu si tu veux.
     print(msg)
-
 
 func _on_PseudoLineEdit_text_changed(new_text):
     var pseudo = new_text.strip_edges()
@@ -76,4 +77,3 @@ func _on_PseudoLineEdit_text_changed(new_text):
             $VBoxContainer/LeaderboardButton.disabled = true
             show_message("Pseudo déjà pris, choisis-en un autre !")
     )
-    
