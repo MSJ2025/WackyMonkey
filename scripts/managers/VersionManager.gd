@@ -23,12 +23,13 @@ func check_for_update() -> void:
 
         if latest_version != CURRENT_VERSION:
             print("Nouvelle version détectée, affichage du dialogue")
-            var dialog := AcceptDialog.new()
+            var dialog := ConfirmationDialog.new()
             dialog.title = "Mise à jour disponible"
-            dialog.dialog_text = "Une nouvelle version (" + latest_version + ") est disponible."
+            dialog.dialog_text = "Une nouvelle version (" + latest_version + ") est disponible." 
             dialog.ok_button_text = "Télécharger"
+            dialog.cancel_button_text = "Plus tard"
             dialog.confirmed.connect(Callable(self, "_on_update_confirmed"))
-            get_tree().root.call_deferred("add_child", dialog)
+            get_tree().root.add_child(dialog)
             dialog.popup_centered()
         else:
             print("Version à jour, pas besoin d'afficher le dialogue")
@@ -37,6 +38,7 @@ func check_for_update() -> void:
     var error = http.request(VERSION_URL)
     if error != OK:
         push_error("Impossible d'envoyer la requête HTTP : %d" % error)
+        http.queue_free()
 
 func _on_update_confirmed() -> void:
     OS.shell_open(DOWNLOAD_URL)
