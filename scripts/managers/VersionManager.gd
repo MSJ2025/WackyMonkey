@@ -26,11 +26,7 @@ func check_for_update() -> void:
             print("Nouvelle version détectée, affichage du dialogue")
             var dialog := ConfirmationDialog.new()
             dialog.title = "Mise à jour disponible"
-            dialog.dialog_text = "Une nouvelle version (" + latest_version + ") est disponible.\n\nTélécharger : " + DOWNLOAD_URL
-            dialog.ok_button_text = "Télécharger"
-            dialog.cancel_button_text = "Plus tard"
-            dialog.theme = UPDATE_THEME
-            dialog.min_size = Vector2(500, 240)
+
             dialog.confirmed.connect(Callable(self, "_on_update_confirmed"))
             get_tree().root.add_child(dialog)
             dialog.popup_centered()
