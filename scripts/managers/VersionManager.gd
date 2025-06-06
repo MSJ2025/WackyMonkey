@@ -25,8 +25,9 @@ func check_for_update() -> void:
         if latest_version != CURRENT_VERSION:
             print("Nouvelle version détectée, affichage du dialogue")
             var dialog := ConfirmationDialog.new()
+            dialog.theme = UPDATE_THEME
             dialog.title = "Mise à jour disponible"
-
+            dialog.dialog_text = "Une nouvelle version (%s) est disponible." % latest_version
             dialog.confirmed.connect(Callable(self, "_on_update_confirmed"))
             get_tree().root.add_child(dialog)
             dialog.popup_centered()

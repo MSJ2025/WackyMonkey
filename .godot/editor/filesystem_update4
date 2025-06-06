@@ -10,6 +10,5 @@ res://scenes/magnet.tscn
 res://scenes/cacahuette.tscn
 res://scenes/settings.tscn
 res://scenes/MainMenu.tscn
+res://assets/themes/update_dialog_theme.tres
 res://scripts/managers/VersionManager.gd
-res://scripts/main_menu.gd
-res://scripts/Splash.gd
