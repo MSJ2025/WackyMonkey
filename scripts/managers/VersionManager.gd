@@ -30,7 +30,7 @@ func check_for_update() -> void:
             dialog.ok_button_text = "Télécharger"
             dialog.cancel_button_text = "Plus tard"
             dialog.theme = UPDATE_THEME
-            dialog.min_size = Vector2(480, 220)
+            dialog.min_size = Vector2(500, 240)
             dialog.confirmed.connect(Callable(self, "_on_update_confirmed"))
             get_tree().root.add_child(dialog)
             dialog.popup_centered()
