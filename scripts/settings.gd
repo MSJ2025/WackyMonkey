@@ -1,6 +1,5 @@
 extends CanvasLayer
 
-const ADMIN_PASSWORD = "Bspp77178"
 
 @onready var slider_music   = $VBoxContainer/HBoxMusic/HSlider
 @onready var slider_sfx     = $VBoxContainer/HBoxSFX/HSlider
@@ -13,15 +12,11 @@ const ADMIN_PASSWORD = "Bspp77178"
 @onready var btn_ok_pseudo    = $VBoxContainer/HBoxEditPseudo/BtnOkPseudo
 @onready var btn_reset     = $VBoxContainer/BtnReset
 @onready var btn_back      = $VBoxContainer/BtnBack
-@onready var btn_admin     = $VBoxContainer/BtnAdmin
 @onready var label_music_percent = $VBoxContainer/HBoxMusic/LabelMusicPercent
 @onready var label_sfx_percent   = $VBoxContainer/HBoxSFX/LabelSFXPercent
 
 var available_languages = ["Français", "English", "Español"] # Modifie selon tes besoins
 var settings_file = "user://settings.cfg"
-var admin_scene_path : String = "res://scenes/AdminPage.tscn"
-var password_dialog : AcceptDialog
-var password_field  : LineEdit
 
 func _ready():
     load_settings()
@@ -33,15 +28,6 @@ func _ready():
     btn_modify_pseudo.pressed.connect(_on_modify_pseudo)
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
     var pseudo = ScoreManager.load_pseudo()
-    btn_admin.visible = pseudo.to_lower() == "jordi77178"
-    # Cr\u00e9e la bo\u00eete de dialogue pour le mot de passe admin
-    password_dialog = AcceptDialog.new()
-    password_dialog.title = "Mot de passe"
-    password_field = LineEdit.new()
-    password_field.secret = true
-    password_dialog.add_child(password_field)
-    add_child(password_dialog)
-    password_dialog.confirmed.connect(_on_password_confirmed)
 func load_settings():
     var config = ConfigFile.new()
     if config.load(settings_file) == OK:
@@ -86,7 +72,6 @@ func connect_signals():
     btn_ok_pseudo.pressed.connect(_on_ok_pseudo)
     btn_reset.pressed.connect(_on_reset_scores)
     btn_back.pressed.connect(_on_back_pressed)
-    btn_admin.pressed.connect(_on_admin_pressed)
 
 func _on_music_volume_changed(value):
     AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(value))
@@ -151,21 +136,6 @@ func _on_reset_scores():
 func _on_back_pressed():
     get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
-func _on_admin_pressed():
-    password_dialog.dialog_text = "Entrez le mot de passe"
-    password_field.text = ""
-    password_dialog.popup_centered()
-    password_field.grab_focus()
-
-func _on_password_confirmed():
-    if password_field.text == ADMIN_PASSWORD:
-        password_dialog.hide()
-        if admin_scene_path != "":
-            get_tree().change_scene_to_file(admin_scene_path)
-    else:
-        password_dialog.dialog_text = "Mot de passe incorrect"
-        password_field.text = ""
-        password_dialog.popup_centered()
 
 func show_message(msg):
     print(msg)

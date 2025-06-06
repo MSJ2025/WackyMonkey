@@ -5,6 +5,7 @@ extends Control
 @export var display_time   : float  = 5.0  # doit correspondre à la durée de votre anim
 
 func _ready() -> void:
+    VersionManager.check_for_update()
     # 1) démarre l’anim
     $AnimationPlayer.play("intro")
     # 2) attends la durée (display_time)
