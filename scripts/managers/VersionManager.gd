@@ -3,6 +3,7 @@ extends Node
 const CURRENT_VERSION := "1.0.1"
 const VERSION_URL := "https://gist.githubusercontent.com/MSJ2025/4d20c7a04314d0a760b19bc41ae59c37/raw/c57b2d11e31f2efd827c4cf3ba27ad0fa6fbbcb9/version.txt"
 const DOWNLOAD_URL := "https://example.com/download"
+const UPDATE_THEME := preload("res://assets/themes/update_dialog_theme.tres")
 
 func check_for_update() -> void:
     var http := HTTPRequest.new()
@@ -23,12 +24,15 @@ func check_for_update() -> void:
 
         if latest_version != CURRENT_VERSION:
             print("Nouvelle version détectée, affichage du dialogue")
-            var dialog := AcceptDialog.new()
+            var dialog := ConfirmationDialog.new()
             dialog.title = "Mise à jour disponible"
-            dialog.dialog_text = "Une nouvelle version (" + latest_version + ") est disponible."
+            dialog.dialog_text = "Une nouvelle version (" + latest_version + ") est disponible.\n\nTélécharger : " + DOWNLOAD_URL
             dialog.ok_button_text = "Télécharger"
+            dialog.cancel_button_text = "Plus tard"
+            dialog.theme = UPDATE_THEME
+            dialog.min_size = Vector2(480, 220)
             dialog.confirmed.connect(Callable(self, "_on_update_confirmed"))
-            get_tree().root.call_deferred("add_child", dialog)
+            get_tree().root.add_child(dialog)
             dialog.popup_centered()
         else:
             print("Version à jour, pas besoin d'afficher le dialogue")
@@ -37,6 +41,7 @@ func check_for_update() -> void:
     var error = http.request(VERSION_URL)
     if error != OK:
         push_error("Impossible d'envoyer la requête HTTP : %d" % error)
+        http.queue_free()
 
 func _on_update_confirmed() -> void:
     OS.shell_open(DOWNLOAD_URL)
