@@ -31,8 +31,8 @@ func _ready():
 func load_settings():
     var config = ConfigFile.new()
     if config.load(settings_file) == OK:
-        slider_music.value = float(config.get_value("audio", "volume_music", 1.0))
-        slider_sfx.value   = float(config.get_value("audio", "volume_sfx", 1.0))
+        slider_music.value = float(config.get_value("audio", "music_volume", 1.0))
+        slider_sfx.value   = float(config.get_value("audio", "sfx_volume", 1.0))
         check_vibro.button_pressed = bool(config.get_value("vibration", "enabled", true))
         var lang = str(config.get_value("ui", "language", "Français"))
         option_lang.selected = max(available_languages.find(lang), 0)
@@ -44,8 +44,8 @@ func load_settings():
 
 func save_settings():
     var config = ConfigFile.new()
-    config.set_value("audio", "volume_music", slider_music.value)
-    config.set_value("audio", "volume_sfx", slider_sfx.value)
+    config.set_value("audio", "music_volume", slider_music.value)
+    config.set_value("audio", "sfx_volume", slider_sfx.value)
     config.set_value("vibration", "enabled", check_vibro.button_pressed)
     config.set_value("ui", "language", available_languages[option_lang.selected])
     config.save(settings_file)
@@ -60,8 +60,8 @@ func setup_ui():
     label_pseudo.text = pseudo
     hbox_edit_pseudo.visible = false
     # Applique volume audio dès le départ
-    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(slider_music.value))
-    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), linear_to_db(slider_sfx.value))
+    SettingsManager.set_music_volume(slider_music.value)
+    SettingsManager.set_sfx_volume(slider_sfx.value)
 
 func connect_signals():
     slider_music.value_changed.connect(_on_music_volume_changed)
@@ -74,17 +74,17 @@ func connect_signals():
     btn_back.pressed.connect(_on_back_pressed)
 
 func _on_music_volume_changed(value):
-    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(value))
+    SettingsManager.set_music_volume(value)
     label_music_percent.text = str(round(value * 100)) + "%"
     save_settings()
 
 func _on_sfx_volume_changed(value):
-    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), linear_to_db(value))
+    SettingsManager.set_sfx_volume(value)
     label_sfx_percent.text = str(round(value * 100)) + "%"
     save_settings()
 
 func _on_vibro_toggled(pressed):
-    # Appelle ici ton gestionnaire de vibration si tu veux tester
+    SettingsManager.set_vibration(pressed)
     save_settings()
 
 func _on_lang_selected(idx):
