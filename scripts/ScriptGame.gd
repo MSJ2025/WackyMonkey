@@ -226,6 +226,9 @@ func _on_game_over() -> void:
     # Enregistrement en local
     ScoreManager.add_score(pseudo, score_final)
 
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("game_over", {"score": score_final, "height": height_score})
+
     # Envoi Firestore EN LIGNE
     FirestoreManager.submit_score_if_best(
         pseudo,          # 1
@@ -239,9 +242,13 @@ func _on_game_over() -> void:
     game_over_layer.show_results(height_score, banana_score)
 
 func _on_replay_pressed() -> void:
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("replay")
     _save_and_go_to_scene("res://scenes/Game.tscn")  # <-- ICI
 
 func _on_menu_pressed() -> void:
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("return_menu")
     _save_and_go_to_scene("res://scenes/MainMenu.tscn")  # <-- ICI
     
 func _save_and_go_to_scene(scene_path: String) -> void:
@@ -275,6 +282,8 @@ func _level_up() -> void:
     level += 1
     label_level.text = "Niveau: %d" % level
     level_cfg = LevelManager.get_config_for(level)
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("level_up", {"level": level})
     print("⬆️ Palier %d, nouvelle cfg :" % level, level_cfg)
     # Positionne la barre du niveau SUIVANT
     var next_palier_y = initial_player_y - (level * PALIER_METRES)

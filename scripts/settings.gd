@@ -137,9 +137,13 @@ func _on_ok_pseudo():
 
 func _on_reset_scores():
     ScoreManager.reset() # À adapter à ta logique (voir plus bas)
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("reset_scores")
     show_message("Scores remis à zéro !")
 
 func _on_back_pressed():
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("settings_closed")
     get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 
