@@ -14,6 +14,8 @@ var displayed_score: int = 0
 var anim_speed     : int = 600   # points par seconde
 
 func show_results(height, bananas):
+    # Recharge le tableau des scores pour disposer de la dernière version
+    ScoreManager.load()
     final_meters = int(height)
     final_bananas = int(bananas)
     final_score = final_meters * 0.5 + final_bananas * 5
