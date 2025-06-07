@@ -29,7 +29,11 @@ func save():
         var key = "score_%d" % i
         config.set_value("scores", key + "_username", leaderboard[i]["pseudo"])
         config.set_value("scores", key + "_value", int(leaderboard[i]["score"]))
-    config.save("user://leaderboard.cfg")
+    var err = config.save("user://leaderboard.cfg")
+    if err != OK:
+        push_error("Impossible d'enregistrer user://leaderboard.cfg : %s" % err)
+    elif not FileAccess.file_exists("user://leaderboard.cfg"):
+        push_error("Fichier user://leaderboard.cfg non trouvé après sauvegarde")
 
 func load():
     leaderboard.clear()
