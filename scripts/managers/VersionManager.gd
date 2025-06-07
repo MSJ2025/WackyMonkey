@@ -1,7 +1,7 @@
 extends Node
 
 const CURRENT_VERSION := "1.0.1"
-const VERSION_URL := "https://gist.githubusercontent.com/MSJ2025/4d20c7a04314d0a760b19bc41ae59c37/raw/c57b2d11e31f2efd827c4cf3ba27ad0fa6fbbcb9/version.txt"
+const VERSION_URL := "https://raw.githubusercontent.com/MSJ2025/wackymonkey-version/refs/heads/main/version.txt"
 const DOWNLOAD_URL := "https://example.com/download"
 const UPDATE_THEME := preload("res://assets/themes/update_dialog_theme.tres")
 

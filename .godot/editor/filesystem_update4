@@ -1,4 +1,5 @@
 res://scenes/platform.tscn
+res://assets/themes/update_dialog_theme.tres
 res://scripts/ScriptGame.gd
 res://scenes/platform2.tscn
 res://scenes/platform3.tscn
@@ -10,5 +11,5 @@ res://scenes/magnet.tscn
 res://scenes/cacahuette.tscn
 res://scenes/settings.tscn
 res://scenes/MainMenu.tscn
-res://assets/themes/update_dialog_theme.tres
+res://scripts/managers/ScoreManager.gd
 res://scripts/managers/VersionManager.gd

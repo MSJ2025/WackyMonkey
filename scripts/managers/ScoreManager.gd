@@ -4,7 +4,7 @@ extends Node
 var leaderboard : Array = []
 
 func _ready() -> void:
-    load()
+    self.load()
 
 func load_pseudo() -> String:
     var config = ConfigFile.new()

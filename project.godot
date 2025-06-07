@@ -15,6 +15,11 @@ run/main_scene="res://scenes/Splash.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
 config/icon="res://assets/logo.png"
 
+[audio]
+
+enable_audio_bus_layout=true
+audio_bus_layout="res://default_bus_layout.tres"
+
 [autoload]
 
 LevelManager="*res://scripts/LevelManager.gd"
@@ -47,7 +52,3 @@ ui_jump={
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
-
-[audio]
-enable_audio_bus_layout=true
-audio_bus_layout="res://default_bus_layout.tres"
