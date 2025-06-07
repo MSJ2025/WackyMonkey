@@ -81,28 +81,35 @@ score_line_scene = ExtResource("7_m3jgn")
 
 [node name="BananaPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_l4tja")
+bus = "SFX"
 
 [node name="BurpPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("9_yygk8")
+bus = "SFX"
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_b26ab")
 volume_db = -11.949
 autoplay = true
 parameters/looping = true
+bus = "Music"
 
 [node name="PeanutPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("9_wrouo")
+bus = "SFX"
 
 [node name="MagnetPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("11_4wvjy")
+bus = "SFX"
 
 [node name="LevelUpPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("11_fat3d")
+bus = "SFX"
 
 [node name="Jump" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_y0he4")
 volume_db = 10.271
+bus = "SFX"
 
 [node name="Parallax2D" type="ParallaxBackground" parent="."]
 
@@ -217,6 +224,7 @@ scale = Vector2(1, 1)
 
 [node name="JumpPlayer" type="AudioStreamPlayer" parent="Player"]
 stream = ExtResource("14_y0he4")
+bus = "SFX"
 
 [node name="LevelLine" type="ColorRect" parent="."]
 offset_left = -320.0
