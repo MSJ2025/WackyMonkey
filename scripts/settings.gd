@@ -33,7 +33,13 @@ func load_settings():
     if config.load(settings_file) == OK:
         slider_music.value = float(config.get_value("audio", "music_volume", 1.0))
         slider_sfx.value   = float(config.get_value("audio", "sfx_volume", 1.0))
-        check_vibro.button_pressed = bool(config.get_value("vibration", "enabled", true))
+        if config.has_section_key("vibration", "enabled"):
+            check_vibro.button_pressed = bool(config.get_value("vibration", "enabled", true))
+            config.set_value("game", "vibration", check_vibro.button_pressed)
+            config.erase_section_key("vibration", "enabled")
+            config.save(settings_file)
+        else:
+            check_vibro.button_pressed = bool(config.get_value("game", "vibration", true))
         var lang = str(config.get_value("ui", "language", "Français"))
         option_lang.selected = max(available_languages.find(lang), 0)
     else:
@@ -46,7 +52,7 @@ func save_settings():
     var config = ConfigFile.new()
     config.set_value("audio", "music_volume", slider_music.value)
     config.set_value("audio", "sfx_volume", slider_sfx.value)
-    config.set_value("vibration", "enabled", check_vibro.button_pressed)
+    config.set_value("game", "vibration", check_vibro.button_pressed)
     config.set_value("ui", "language", available_languages[option_lang.selected])
     config.save(settings_file)
 
