@@ -3,6 +3,9 @@ extends Node
 
 var leaderboard : Array = []
 
+func _ready() -> void:
+    load()
+
 func load_pseudo() -> String:
     var config = ConfigFile.new()
     var err = config.load("user://user_settings.cfg")

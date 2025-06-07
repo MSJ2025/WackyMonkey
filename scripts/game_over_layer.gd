@@ -33,8 +33,8 @@ func _process(delta):
         label_score.text = "Score : %d" % displayed_score
     else:
         set_process(false)
-        # Afficher le meilleur score
-        var best = final_score # ou lire le local record si tu veux
+        # Afficher le meilleur score enregistré localement
+        var best = ScoreManager.get_best_score()
         label_best_score.text = "🏆 Record : %d" % best
 
         # ACTIVER LES BOUTONS ici si besoin
