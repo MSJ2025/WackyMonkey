@@ -16,7 +16,7 @@ func load_pseudo() -> String:
 func add_score(pseudo: String, score: int) -> void:
     leaderboard.append({"pseudo": pseudo, "score": int(score)})
     # Toujours trier en mémoire, du plus haut au plus bas
-    leaderboard.sort_custom(func(a, b): return int(b["score"]) - int(a["score"]))
+    leaderboard.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
     if leaderboard.size() > 10:
         leaderboard = leaderboard.slice(0, 10)
     save()
@@ -24,12 +24,16 @@ func add_score(pseudo: String, score: int) -> void:
 func save():
     var config = ConfigFile.new()
     # Toujours sauver les scores du plus haut au plus bas
-    leaderboard.sort_custom(func(a, b): return int(b["score"]) - int(a["score"]))
+    leaderboard.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
     for i in range(leaderboard.size()):
         var key = "score_%d" % i
         config.set_value("scores", key + "_username", leaderboard[i]["pseudo"])
         config.set_value("scores", key + "_value", int(leaderboard[i]["score"]))
-    config.save("user://leaderboard.cfg")
+    var err = config.save("user://leaderboard.cfg")
+    if err != OK:
+        push_error("Impossible d'enregistrer user://leaderboard.cfg : %s" % err)
+    elif not FileAccess.file_exists("user://leaderboard.cfg"):
+        push_error("Fichier user://leaderboard.cfg non trouvé après sauvegarde")
 
 func load():
     leaderboard.clear()
@@ -43,12 +47,12 @@ func load():
             if pseudo != null and score != null:
                 leaderboard.append({"pseudo": pseudo, "score": int(score)})
     # Toujours trier après chargement
-    leaderboard.sort_custom(func(a, b): return int(b["score"]) - int(a["score"]))
+    leaderboard.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
 
 func get_top_scores() -> Array:
     # Renvoie une copie triée à l’affichage
     var copy = leaderboard.duplicate()
-    copy.sort_custom(func(a, b): return int(b["score"]) - int(a["score"]))
+    copy.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
     return copy
     
 func save_pseudo(pseudo: String) -> void:
@@ -85,7 +89,7 @@ func reset() -> void:
 func get_best_score() -> int:
     if leaderboard.is_empty():
         return 0
-    leaderboard.sort_custom(func(a, b): return int(b["score"]) - int(a["score"]))
+    leaderboard.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
     return leaderboard[0]["score"]
     
 func get_best_height():
