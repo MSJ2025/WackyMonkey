@@ -129,3 +129,4 @@ shape = SubResource("RectangleShape2D_5o1au")
 
 [node name="JumpSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_c4cbx")
+bus = "SFX"
