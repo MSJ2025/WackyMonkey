@@ -38,6 +38,8 @@ func _ready():
 func _on_Play_pressed():
     var pseudo = pseudo_lineedit.text.strip_edges()
     ScoreManager.save_pseudo(pseudo)
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("play_pressed")
     get_tree().change_scene_to_file(game_scene_path)
 
 func _on_Leaderboard_pressed():
@@ -46,13 +48,19 @@ func _on_Leaderboard_pressed():
         show_message("Merci de saisir un pseudo !")
         return
     ScoreManager.save_pseudo(pseudo)
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("leaderboard_opened")
     get_tree().change_scene_to_file(leaderboard_scene)
 
 func _on_Settings_pressed():
     if settings_scene_path != "":
+        if Engine.has_singleton("Firebase"):
+            Firebase.Analytics.log_event("settings_opened")
         get_tree().change_scene_to_file(settings_scene_path)
 
 func _on_Quit_pressed():
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("quit_pressed")
     get_tree().quit()
 
 func show_message(msg):

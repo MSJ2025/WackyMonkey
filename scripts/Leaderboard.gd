@@ -14,6 +14,8 @@ func _ready():
     _afficher_best_info()  # doit être appelé après le chargement du score local
 
 func _on_return_pressed():
+    if Engine.has_singleton("Firebase"):
+        Firebase.Analytics.log_event("leaderboard_closed")
     get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _afficher_best_info():
