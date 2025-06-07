@@ -1,15 +1,13 @@
-res://scenes/platform.tscn
+res://scenes/Game.tscn
 res://assets/themes/update_dialog_theme.tres
 res://scripts/ScriptGame.gd
+res://scenes/platform.tscn
 res://scenes/platform2.tscn
 res://scenes/platform3.tscn
 res://scenes/banana.tscn
 res://scenes/Splash.tscn
-res://scenes/Game.tscn
 res://scenes/Player.tscn
 res://scenes/magnet.tscn
 res://scenes/cacahuette.tscn
 res://scenes/settings.tscn
 res://scenes/MainMenu.tscn
-res://scripts/managers/ScoreManager.gd
-res://scripts/managers/VersionManager.gd

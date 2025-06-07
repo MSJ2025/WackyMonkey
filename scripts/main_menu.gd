@@ -7,7 +7,7 @@ extends CanvasLayer
 @onready var pseudo_lineedit = $VBoxContainer/PseudoLineEdit
 @onready var label_pseudo = $LabelPseudo
 
-
+var Firebase = Engine.get_singleton("Firebase")
 
 func _ready():
     print("DEBUG: _ready() called")

@@ -27,6 +27,7 @@ ScoreManager="*res://scripts/managers/ScoreManager.gd"
 FirestoreManager="*res://scripts/managers/FirestoreManager.gd"
 SettingsManager="*res://scripts/managers/SettingsManager.gd"
 VersionManager="*res://scripts/managers/VersionManager.gd"
+Firebase="*res://addons/godot-firebase/firebase_analytics.gd"
 
 [display]
 
