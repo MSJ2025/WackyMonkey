@@ -139,7 +139,7 @@ func on_snapshot(when_called : Callable, poll_time : float = 1.0) -> FirestoreLi
 		return
 	
 	changed.connect(when_called, CONNECT_REFERENCE_COUNTED)
-	var listener = preload("res://addons/godot-firebase/firestore/firestore_listener.tscn").instantiate()
+	var listener = preload("res://addons/firebase-analytics-mock/firestore/firestore_listener.tscn").instantiate()
 	add_child(listener)
 	listener.initialize_listener(collection_name, doc_name, poll_time)
 	listener.owner = self

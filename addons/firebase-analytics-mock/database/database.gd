@@ -37,14 +37,14 @@ func _on_FirebaseAuth_logout() -> void:
 	_auth = {}
 
 func get_database_reference(path : String, filter : Dictionary = {}) -> FirebaseDatabaseReference:
-	var firebase_reference = load("res://addons/godot-firebase/database/firebase_database_reference.tscn").instantiate()
+	var firebase_reference = load("res://addons/firebase-analytics-mock/database/firebase_database_reference.tscn").instantiate()
 	firebase_reference.set_db_path(path, filter)
 	firebase_reference.set_auth_and_config(_auth, _config)
 	add_child(firebase_reference)
 	return firebase_reference
 	
 func get_once_database_reference(path : String, filter : Dictionary = {}) -> FirebaseOnceDatabaseReference:
-	var firebase_reference = load("res://addons/godot-firebase/database/firebase_once_database_reference.tscn").instantiate()
+	var firebase_reference = load("res://addons/firebase-analytics-mock/database/firebase_once_database_reference.tscn").instantiate()
 	firebase_reference.set_db_path(path, filter)
 	firebase_reference.set_auth_and_config(_auth, _config)
 	add_child(firebase_reference)

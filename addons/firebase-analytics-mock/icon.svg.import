@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://addons/godot-firebase/icon.svg"
+source_file="res://addons/firebase-analytics-mock/icon.svg"
 dest_files=["res://.godot/imported/icon.svg-5c4f39d37c9275a3768de73a392fd315.ctex"]
 
 [params]
