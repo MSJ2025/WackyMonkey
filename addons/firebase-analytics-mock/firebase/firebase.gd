@@ -104,7 +104,7 @@ func _check_emulating() -> void:
 func _load_config() -> void:
 	if not (_config.apiKey != "" and _config.authDomain != ""):
 		var env = ConfigFile.new()
-		var err = env.load("res://addons/godot-firebase/.env")
+		var err = env.load("res://addons/firebase-analytics-mock/.env")
 		if err == OK:
 			for key in _config.keys():
 				var config_value = _config[key]
@@ -121,7 +121,7 @@ func _load_config() -> void:
 					else:
 						_config[key] = value
 		else:
-			_printerr("Unable to read .env file at path 'res://addons/godot-firebase/.env'")
+			_printerr("Unable to read .env file at path 'res://addons/firebase-analytics-mock/.env'")
 
 	_setup_modules()
 

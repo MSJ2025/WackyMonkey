@@ -1,6 +1,6 @@
 # WackyMonkey
 
-Ce projet embarque un plugin `FirebaseAnalytics` simplifié. Celui-ci se contente d'afficher les évènements dans la console et **n'envoie pas** d'informations à Firebase.
+Ce projet embarque un plugin `FirebaseAnalyticsMock` simplifié. Celui-ci se contente d'afficher les évènements dans la console et **n'envoie pas** d'informations à Firebase.
 
 Pour voir ces logs sur iOS et Android :
 
@@ -8,7 +8,7 @@ Pour voir ces logs sur iOS et Android :
    - `GoogleService-Info.plist` pour iOS
    - `google-services.json` pour Android
 2. Copiez ces fichiers à la racine du projet **avant la compilation**.
-3. Dans l'éditeur Godot, activez le plugin `FirebaseAnalytics` (menu Plugins).
+3. Dans l'éditeur Godot, activez le plugin `FirebaseAnalyticsMock` (menu Plugins).
 
 Les appels aux évènements sont effectués dans les scripts via `Firebase.Analytics.log_event()`.
 
