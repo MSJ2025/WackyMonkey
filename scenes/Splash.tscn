@@ -13,70 +13,46 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationPlayer/player:size")
+tracks/0/path = NodePath("AnimationPlayer/player:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 2.03333, 4.03333),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(804, 1014), Vector2(903, 1065), Vector2(818, 1006)]
+"values": [0.0, -0.0872665, 0.132645]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("AnimationPlayer/player:rotation")
+tracks/1/path = NodePath("AnimationPlayer/TextureRect4:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 2.03333, 4.03333),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.0, -0.0872665, 0.132645]
+"values": [Vector2(-972, 1216)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("AnimationPlayer/TextureRect5:size")
+tracks/2/path = NodePath("AnimationPlayer/TextureRect2:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1079, 794)]
+"values": [Vector2(-120, -1033)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("AnimationPlayer/TextureRect4:position")
+tracks/3/path = NodePath("AnimationPlayer/player:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-972, 1216)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("AnimationPlayer/TextureRect2:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-120, -1033)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("AnimationPlayer/player:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -181,7 +157,7 @@ script = ExtResource("1_efd2c")
 libraries = {
 "": SubResource("AnimationLibrary_xufct")
 }
-autoplay = "intro"
+autoplay = "RESET"
 
 [node name="TextureRect" type="TextureRect" parent="AnimationPlayer"]
 offset_left = -121.0
@@ -193,9 +169,9 @@ texture = ExtResource("2_s4vu7")
 [node name="TextureRect4" type="TextureRect" parent="AnimationPlayer"]
 modulate = Color(1, 1, 1, 0.403922)
 offset_left = -972.0
-offset_top = -2748.95
+offset_top = 1216.0
 offset_right = 1890.0
-offset_bottom = 1487.05
+offset_bottom = 5452.0
 texture = ExtResource("3_ga8t4")
 expand_mode = 1
 
@@ -208,16 +184,17 @@ texture = ExtResource("4_jvqlo")
 expand_mode = 1
 
 [node name="player" type="TextureRect" parent="AnimationPlayer"]
+visible = false
 texture_filter = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -533.5
-offset_top = -514.0
-offset_right = 270.5
-offset_bottom = 500.0
+offset_left = -571.5
+offset_top = -741.0
+offset_right = 232.5
+offset_bottom = 273.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_u7ipx")
@@ -227,10 +204,10 @@ expand_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 48.0
-offset_top = -2621.0
-offset_right = 1127.0
-offset_bottom = -1827.0
+offset_left = 28.0
+offset_top = -1727.0
+offset_right = 992.0
+offset_bottom = -1017.0
 grow_vertical = 0
 texture = ExtResource("6_rpvp5")
 expand_mode = 1

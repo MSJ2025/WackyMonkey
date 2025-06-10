@@ -1,7 +1,7 @@
 # res://scripts/character_body_2d.gd
 extends CharacterBody2D
 
-@export var speed      : float = 210.0
+@export var speed      : float = 310.0
 @export var jump_force : float = 1500.0
 @export var gravity    : float = 2500.0
 
